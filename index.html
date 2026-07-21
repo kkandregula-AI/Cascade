@@ -79,6 +79,28 @@ header.hero{min-height:88vh;display:flex;flex-direction:column;justify-content:c
 .flow-cell:last-child .arrow{display:none}
 #heroFlow{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.5}
 .scroll-hint{margin-top:34px;font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--faint)}
+.compress-ex{margin-top:34px;border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:18px 20px}
+.ce-title{font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--gold);text-transform:uppercase;margin-bottom:14px}
+.ce-row{display:flex;align-items:stretch;gap:10px;flex-wrap:wrap}
+.ce-cell{flex:1;min-width:150px;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:12px 13px}
+.ce-cell .m{font-family:var(--mono);font-size:13px;color:var(--ink)}
+.ce-cell .m b{color:var(--gold);font-weight:500}
+.ce-cell .gb{font-family:var(--mono);font-size:19px;color:var(--gold);margin-top:6px}
+.ce-cell .gb small{font-size:11px;color:var(--dim)}
+.ce-bar{height:5px;background:rgba(255,255,255,.05);border-radius:3px;margin-top:9px;overflow:hidden}
+.ce-bar i{display:block;height:100%;background:var(--gold);border-radius:3px}
+.ce-cell .tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;color:var(--dim);margin-top:8px}
+.ce-arrow{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px;min-width:86px}
+.ce-arrow .op{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--gold);text-transform:uppercase}
+.ce-arrow .sym{color:var(--gold);font-size:15px}
+.ce-arrow .fx{font-family:var(--mono);font-size:10px;color:var(--dim)}
+.ce-why{margin-top:14px;font-size:13px;color:var(--dim);line-height:1.55}
+.ce-why em{color:var(--ink);font-style:normal;font-weight:500}
+@media (max-width:680px){
+  .ce-row{flex-direction:column}
+  .ce-arrow{flex-direction:row;min-width:0;padding:2px 0}
+  .ce-arrow .sym{transform:rotate(90deg)}
+}
 
 /* ---------- stage 1 : weight vault ---------- */
 .vault-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:22px;margin-top:18px}
@@ -161,6 +183,16 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .verdict .why{margin-top:8px;font-size:13px}
 .verdict .why em{color:var(--ink);font-style:normal;font-weight:500}
 
+/* ---------- corollary : moat builder ---------- */
+.moat-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
+.moat-opt{border:1px solid var(--line);background:var(--panel-2);border-radius:10px;padding:13px 12px;text-align:left;color:var(--dim);font-size:12.5px;line-height:1.4;transition:all .18s}
+.moat-opt .ic{font-size:19px;display:block;margin-bottom:7px}
+.moat-opt b{display:block;color:var(--ink);font-size:13px;margin-bottom:3px;font-weight:600}
+.moat-opt.on{border-color:var(--gold);background:var(--gold-soft);color:var(--ink)}
+.moat-opt .own{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--faint);display:inline-block;margin-top:8px;border:1px solid var(--line);padding:2px 8px;border-radius:20px}
+.moat-opt.on .own{color:var(--good);border-color:rgba(127,181,138,.4)}
+@media (max-width:820px){.moat-opts{grid-template-columns:1fr}}
+
 /* ---------- synthesis / footer ---------- */
 .synth{border:1px solid var(--line-strong);border-radius:16px;padding:34px 30px;margin:70px 0 20px;background:linear-gradient(180deg,var(--panel),var(--bg));text-align:center}
 .synth p.big{font-family:var(--display);font-size:clamp(17px,3vw,22px);line-height:1.65;letter-spacing:.02em;max-width:760px;margin:14px auto 0}
@@ -192,6 +224,32 @@ footer .sig{font-family:var(--mono);letter-spacing:.08em;font-size:11.5px;color:
     <div class="eyebrow">AI Capability Flow · Frontier Model → Downstream Systems</div>
     <h1>CASCADE<span class="dot">.</span></h1>
     <p class="sub">One mental model for how AI capability flows from <em>frontier model</em> to <em>downstream systems</em> — released as open or closed <em>weights</em>, compressed by <em>distillation</em> and <em>quantization</em>, and delivered through the <em>application layer</em> on your device. Four stages. Four things to try and feel.</p>
+    <div class="compress-ex" aria-label="Worked example of the compression pipeline">
+      <div class="ce-title">One Example, End to End — Why Distillation Comes First</div>
+      <div class="ce-row">
+        <div class="ce-cell">
+          <div class="m"><b>70B</b> teacher · FP16</div>
+          <div class="gb">140 <small>GB</small></div>
+          <div class="ce-bar"><i style="width:100%"></i></div>
+          <div class="tag">CLOUD GPUs ONLY</div>
+        </div>
+        <div class="ce-arrow"><span class="op">Distill</span><span class="sym">→</span><span class="fx">9× fewer weights</span></div>
+        <div class="ce-cell">
+          <div class="m"><b>8B</b> student · FP16</div>
+          <div class="gb">16 <small>GB</small></div>
+          <div class="ce-bar"><i style="width:32%"></i></div>
+          <div class="tag">LAPTOP-SIZED</div>
+        </div>
+        <div class="ce-arrow"><span class="op">Quantize</span><span class="sym">→</span><span class="fx">4× fewer bits</span></div>
+        <div class="ce-cell">
+          <div class="m"><b>8B</b> student · INT4</div>
+          <div class="gb">4 <small>GB</small></div>
+          <div class="ce-bar"><i style="width:9%"></i></div>
+          <div class="tag">FITS A PHONE · TAB · LAPTOP</div>
+        </div>
+      </div>
+      <p class="ce-why">Two stages, two different redundancies: distillation removes <em>parameters the task doesn't need</em> (it's training — done once, at high precision), then quantization removes <em>precision the parameters don't need</em> (post-processing — cheap, even per-device). That's why the order is fixed: shrink the count, then shrink the bits.</p>
+    </div>
     <nav class="flow-rail" aria-label="The four stages">
       <a class="flow-cell" href="#s1">
         <span class="k">STAGE 01</span>
@@ -279,6 +337,7 @@ footer .sig{font-family:var(--mono);letter-spacing:.08em;font-size:11.5px;color:
       </div>
       <div class="vault-say" id="distillSay" style="margin-top:14px">The student starts clueless — a flat guess. Try both training buttons and compare what each one teaches.</div>
       <p class="note"><b>Feel the difference:</b> hard labels only push "Paris" up. Distillation also teaches the <em>ranking of wrong answers</em> — that Lyon beats London — which is geography knowledge, compressed.</p>
+      <p class="note"><b>Access matters:</b> the teacher needn't be a frontier model — just meaningfully stronger than the student. But <em>soft-target</em> distillation (what you just did) needs the teacher's full probability outputs, which means running it yourself: open weights, or being the lab that owns it. Behind a closed API you can only imitate sampled text — shallower, and usually fenced off by terms of service.</p>
     </div>
   </div>
 </section>
@@ -326,6 +385,7 @@ footer .sig{font-family:var(--mono);letter-spacing:.08em;font-size:11.5px;color:
         </div>
       </div>
       <p class="note"><b>Feel it:</b> drag to INT8 — the dots barely leave the curve, yet memory falls 4×. Drag to INT4 and watch the staircase appear. That staircase <em>is</em> the quality trade you're making for a phone-sized model.</p>
+      <p class="note"><b>Required, or just storage?</b> Neither exactly. On a big cloud GPU it's an <em>optimization</em> — but not only of storage: generating each token streams all weights through the chip, so 4× smaller weights ≈ 4× less data moved ≈ faster, cheaper serving. On constrained hardware it's a <em>prerequisite</em> — no quantization, no model on the phone. And it's applied <em>after</em> training, which is why it sits here, downstream, in the flow.</p>
     </div>
   </div>
 </section>
@@ -355,11 +415,35 @@ footer .sig{font-family:var(--mono);letter-spacing:.08em;font-size:11.5px;color:
   </div>
 </section>
 
+<!-- ================= COROLLARY : THE MOAT ================= -->
+<section class="stage" id="s5">
+  <div class="wrap">
+    <div class="stage-head"><span class="stage-num">COROLLARY</span><h2>When Weights Become a Commodity</h2></div>
+    <p class="lede">The flow has a sting in its tail. Strong open base models are increasingly released <strong>free, as commodities</strong> — the business sits in the platforms and tooling around them, not in the weights themselves. Which means <strong>downloading weights is not a moat</strong>: anyone can grab the same file this afternoon. Owning a model became cheap at exactly the moment it stopped being the valuable part.</p>
+
+    <div class="panel">
+      <div class="panel-title">Demo · Moat Builder <span class="free-tag">FREE · OFFLINE</span></div>
+      <p style="font-size:13.5px;color:var(--dim);margin-bottom:14px">Toggle what your team actually owns. Watch what happens to your defensibility.</p>
+      <div class="moat-opts" id="moatOpts">
+        <button class="moat-opt" data-moat="weights"><span class="ic">📥</span><b>Downloaded weights</b>A strong open base model, permissively licensed<span class="own">NOT OWNED</span></button>
+        <button class="moat-opt" data-moat="data"><span class="ic">🔁</span><b>Expert data loop</b>Your specialists' judgment, captured continuously as labeled training data no one can scrape<span class="own">NOT OWNED</span></button>
+        <button class="moat-opt" data-moat="evals"><span class="ic">📐</span><b>Domain eval suite</b>Tests that prove the model actually learned your experts' judgment<span class="own">NOT OWNED</span></button>
+      </div>
+      <div class="match-meter" style="margin-top:18px">
+        <div class="row"><span>MOAT STRENGTH</span><b id="moatPct">0%</b></div>
+        <div class="meter-track"><div class="meter-fill" id="moatFill" style="width:0%"></div></div>
+      </div>
+      <div class="vault-say" id="moatSay" style="margin-top:14px">You own nothing yet. Start by grabbing the free weights — like everyone else.</div>
+      <p class="note"><b>The pattern in practice:</b> a small model fine-tuned on years of proprietary expert judgment can beat a frontier generalist <em>inside that narrow domain</em>, at a fraction of the serving cost. The base weights contributed the least scarce part.</p>
+    </div>
+  </div>
+</section>
+
 <!-- ================= SYNTHESIS ================= -->
 <div class="wrap">
   <div class="synth">
     <div class="eyebrow">The One Mental Model</div>
-    <p class="big">Frontier labs <span>create</span> capability. Open weights <span>release</span> it. Distillation <span>shrinks</span> it. Quantization <span>fits</span> it. The application layer is where whatever <span>survives the flow</span> finally meets a human.</p>
+    <p class="big">Frontier labs <span>create</span> capability. Open weights <span>release</span> it. Distillation <span>shrinks</span> it. Quantization <span>fits</span> it. The application layer is where whatever <span>survives the flow</span> finally meets a human. And when the weights become free, the moat moves to <span>your data</span>.</p>
   </div>
 </div>
 
@@ -694,6 +778,43 @@ var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-moti
         n.classList.toggle("lit", c.path.indexOf(n.getAttribute("data-node")) !== -1);
       });
       verdict.innerHTML = "<b>"+c.title+"</b><div class='why'>"+c.why+"</div>";
+    });
+  });
+})();
+
+/* ============ COROLLARY : MOAT BUILDER ============ */
+(function moatBuilder(){
+  var state = { weights:false, data:false, evals:false };
+  var scores = { weights:5, data:60, evals:35 };
+  var opts = document.querySelectorAll(".moat-opt");
+  var pct = document.getElementById("moatPct");
+  var fill = document.getElementById("moatFill");
+  var say = document.getElementById("moatSay");
+
+  function verdict(){
+    var s = 0;
+    for(var k in state){ if(state[k]) s += scores[k]; }
+    pct.textContent = s+"%";
+    fill.style.width = s+"%";
+    if(!state.weights && !state.data && !state.evals){
+      say.innerHTML = "You own nothing yet. Start by grabbing the free weights — like everyone else.";
+    } else if(state.weights && !state.data && !state.evals){
+      say.innerHTML = "<b>Weights only: ~5%.</b> You own a file thousands of teams downloaded the same day. Same model, same capability, zero differentiation. This is a starting line, not a moat.";
+    } else if(state.data && !state.evals){
+      say.innerHTML = "<b>The moat appears.</b> A continuous loop capturing your experts' judgment as training data is the part that can't be downloaded, scraped, or copied. "+(state.weights?"The free weights are just the vessel it fills.":"It's worth more than the weights it will fine-tune.");
+    } else if(state.evals && !state.data){
+      say.innerHTML = "<b>Evals without data: measurement with nothing to measure.</b> A domain eval suite matters — but it compounds only when paired with the expert data loop it's meant to verify.";
+    } else if(state.data && state.evals){
+      say.innerHTML = "<b>"+(state.weights?"Full stack: ~100%.":"~95% — the durable part.")+"</b> Expert data loop + evals proving the model learned it. This pairing is the durable advantage: commodity weights in, specialized capability out, with proof. "+(state.weights?"":"Add the free weights and you're complete — notice they're the cheapest piece.");
+    }
+  }
+  opts.forEach(function(o){
+    o.addEventListener("click", function(){
+      var k = o.getAttribute("data-moat");
+      state[k] = !state[k];
+      o.classList.toggle("on", state[k]);
+      o.querySelector(".own").textContent = state[k] ? "OWNED" : "NOT OWNED";
+      verdict();
     });
   });
 })();
