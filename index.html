@@ -183,6 +183,29 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .verdict .why{margin-top:8px;font-size:13px}
 .verdict .why em{color:var(--ink);font-style:normal;font-weight:500}
 
+/* ---------- in practice : file tree + commands ---------- */
+.tabs{display:inline-flex;border:1px solid var(--line-strong);border-radius:10px;overflow:hidden;flex-wrap:wrap}
+.tabs button{background:transparent;border:none;color:var(--dim);padding:9px 15px;font-size:12.5px;font-weight:500;transition:all .15s;font-family:var(--body)}
+.tabs button.on{background:var(--gold);color:#0A0A0C;font-weight:600}
+.tabpane{display:none;margin-top:18px}
+.tabpane.on{display:block}
+.tree{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:16px 18px;overflow-x:auto}
+.tree pre{font-family:var(--mono);font-size:12px;line-height:1.85;color:var(--dim);white-space:pre}
+.tree pre b{color:var(--gold);font-weight:400}
+.tree pre i{color:var(--faint);font-style:normal}
+.tree pre u{color:var(--ink);text-decoration:none}
+.cmd{background:var(--panel-2);border:1px solid var(--line);border-left:2px solid var(--gold);border-radius:8px;padding:13px 15px;margin-top:12px;overflow-x:auto}
+.cmd pre{font-family:var(--mono);font-size:12px;line-height:1.75;color:var(--ink);white-space:pre}
+.cmd pre i{color:var(--faint);font-style:normal}
+.step{display:flex;gap:12px;margin-top:14px;align-items:flex-start}
+.step .n{font-family:var(--mono);font-size:11px;color:#0A0A0C;background:var(--gold);width:21px;height:21px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.step .sx{font-size:13.5px;color:var(--dim);line-height:1.55}
+.step .sx b{color:var(--ink);font-weight:600;display:block;margin-bottom:2px}
+.cost-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.cost{flex:1;min-width:130px;background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:11px 13px}
+.cost .ck{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase}
+.cost .cv{font-size:13.5px;color:var(--ink);margin-top:4px;font-weight:500}
+
 /* ---------- corollary : moat builder ---------- */
 .moat-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
 .moat-opt{border:1px solid var(--line);background:var(--panel-2);border-radius:10px;padding:13px 12px;text-align:left;color:var(--dim);font-size:12.5px;line-height:1.4;transition:all .18s}
@@ -386,6 +409,67 @@ footer .sig{font-family:var(--mono);letter-spacing:.08em;font-size:11.5px;color:
       </div>
       <p class="note"><b>Feel it:</b> drag to INT8 — the dots barely leave the curve, yet memory falls 4×. Drag to INT4 and watch the staircase appear. That staircase <em>is</em> the quality trade you're making for a phone-sized model.</p>
       <p class="note"><b>Required, or just storage?</b> Neither exactly. On a big cloud GPU it's an <em>optimization</em> — but not only of storage: generating each token streams all weights through the chip, so 4× smaller weights ≈ 4× less data moved ≈ faster, cheaper serving. On constrained hardware it's a <em>prerequisite</em> — no quantization, no model on the phone. And it's applied <em>after</em> training, which is why it sits here, downstream, in the flow.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= IN PRACTICE ================= -->
+<section class="stage" id="sp">
+  <div class="wrap">
+    <div class="stage-head"><span class="stage-num">STAGES 02–03</span><h2>In Practice</h2></div>
+    <p class="lede">You've felt the concepts. Here's what the artifacts actually look like on disk — and what it really takes to shrink a model yourself. <strong>One of these two jobs is a single command. The other is a research project.</strong></p>
+
+    <div class="panel">
+      <div class="panel-title">Reference · From Download to Device <span class="free-tag">READ-ONLY</span></div>
+      <div class="tabs" role="tablist">
+        <button class="on" data-tab="files">What you download</button>
+        <button data-tab="quant">Quantize it</button>
+        <button data-tab="distill">Distill it</button>
+      </div>
+
+      <div class="tabpane on" data-pane="files">
+        <div class="tree"><pre><b>model-name/</b>
+├── <u>config.json</u>                        <i>architecture blueprint</i>
+├── <u>model-00001-of-00004.safetensors</u>   <i>the weights, sharded</i>
+├── <u>model-00002-of-00004.safetensors</u>
+├── <u>model-00003-of-00004.safetensors</u>
+├── <u>model-00004-of-00004.safetensors</u>
+├── <u>model.safetensors.index.json</u>       <i>tensor → shard map</i>
+├── <u>tokenizer.json</u>                     <i>text ⇄ token IDs</i>
+├── <u>tokenizer_config.json</u>              <i>chat template lives here</i>
+├── <u>generation_config.json</u>             <i>default sampling params</i>
+├── <u>README.md</u>                          <i>the model card</i>
+└── <u>LICENSE</u></pre></div>
+        <p class="note"><b>Inside a shard:</b> a header listing tensor names, shapes and dtypes, then raw numbers — e.g. <em>model.layers.0.self_attn.q_proj.weight</em>, shape [4096, 4096], bf16. Nothing executable; the format is designed to be safe to load.</p>
+        <p class="note"><b>What you do <em>not</em> get:</b> the training data, the training code, or the optimizer states. You can run and fine-tune the model — you cannot reproduce it. That gap is exactly why the term is <em>open weights</em>, not <em>open source</em>.</p>
+      </div>
+
+      <div class="tabpane" data-pane="quant">
+        <div class="cost-row">
+          <div class="cost"><div class="ck">Effort</div><div class="cv">Hours</div></div>
+          <div class="cost"><div class="ck">Hardware</div><div class="cv">One GPU — or CPU</div></div>
+          <div class="cost"><div class="ck">Data needed</div><div class="cv">None to a little</div></div>
+        </div>
+        <div class="cmd"><pre><i># 1 · convert to GGUF, still full precision</i>
+python convert_hf_to_gguf.py ./model-name --outtype f16
+
+<i># 2 · compress to 4-bit</i>
+llama-quantize model-f16.gguf model-Q4_K_M.gguf Q4_K_M</pre></div>
+        <p class="note"><b>That's the whole job.</b> One file out, runs on CPU, laptop or phone. <em>Q4_K_M</em> is the usual sweet spot; <em>Q8_0</em> when you want near-lossless. For GPU serving, AWQ or GPTQ instead — both calibrate against a small sample of real text to choose smarter rounding points rather than rounding blindly.</p>
+      </div>
+
+      <div class="tabpane" data-pane="distill">
+        <div class="cost-row">
+          <div class="cost"><div class="ck">Effort</div><div class="cv">Days to weeks</div></div>
+          <div class="cost"><div class="ck">Hardware</div><div class="cv">Multi-GPU</div></div>
+          <div class="cost"><div class="ck">Data needed</div><div class="cv">Your domain corpus</div></div>
+        </div>
+        <div class="step"><span class="n">1</span><span class="sx"><b>Pick a student base</b>You start from an existing small model, not from scratch.</span></div>
+        <div class="step"><span class="n">2</span><span class="sx"><b>Run your domain prompts through the teacher</b>Capture its output <em>distributions</em> — not just the final text. This is the soft-target step, and it needs the teacher's logits.</span></div>
+        <div class="step"><span class="n">3</span><span class="sx"><b>Train the student against those distributions</b>KL-divergence against the teacher's probabilities.</span></div>
+        <div class="step"><span class="n">4</span><span class="sx"><b>Evaluate on a domain eval suite</b>The step people skip and regret. Without it you can't tell whether the student learned the judgment or just the phrasing.</span></div>
+        <p class="note"><b>The reality check:</b> most teams never distill. They take an existing small open model and quantize it — because that's one command, while distillation is a research project needing proprietary data. Which is precisely why quantization is the commodity move anyone can make, and distillation on <em>your own</em> data is the part that stays defensible.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -778,6 +862,19 @@ var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-moti
         n.classList.toggle("lit", c.path.indexOf(n.getAttribute("data-node")) !== -1);
       });
       verdict.innerHTML = "<b>"+c.title+"</b><div class='why'>"+c.why+"</div>";
+    });
+  });
+})();
+
+/* ============ IN PRACTICE : TABS ============ */
+(function practiceTabs(){
+  var btns = document.querySelectorAll(".tabs button");
+  var panes = document.querySelectorAll(".tabpane");
+  btns.forEach(function(b){
+    b.addEventListener("click", function(){
+      var t = b.getAttribute("data-tab");
+      btns.forEach(function(x){ x.classList.toggle("on", x === b); });
+      panes.forEach(function(p){ p.classList.toggle("on", p.getAttribute("data-pane") === t); });
     });
   });
 })();
