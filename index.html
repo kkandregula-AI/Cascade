@@ -79,6 +79,11 @@ header.hero{min-height:88vh;display:flex;flex-direction:column;justify-content:c
 .flow-cell:last-child .arrow{display:none}
 #heroFlow{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.5}
 .scroll-hint{margin-top:34px;font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--faint)}
+.whynow{margin-top:30px;border-left:2px solid var(--gold);padding:2px 0 2px 18px;max-width:700px}
+.whynow .wk{font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--gold);text-transform:uppercase;margin-bottom:8px}
+.whynow p{font-size:14.5px;color:var(--dim);line-height:1.6}
+.whynow p em{color:var(--ink);font-style:normal;font-weight:500}
+.whynow p.kick{margin-top:9px;color:var(--ink);font-size:15px}
 .compress-ex{margin-top:34px;border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:18px 20px}
 .ce-title{font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--gold);text-transform:uppercase;margin-bottom:14px}
 .ce-row{display:flex;align-items:stretch;gap:10px;flex-wrap:wrap}
@@ -275,6 +280,11 @@ footer .sig{font-family:var(--mono);letter-spacing:.08em;font-size:11.5px;color:
     <div class="eyebrow">AI Capability Flow · Frontier Model → Downstream Systems</div>
     <h1>CASCADE<span class="dot">.</span></h1>
     <p class="sub">One mental model for how AI capability flows from <em>frontier model</em> to <em>downstream systems</em> — released as open or closed <em>weights</em>, compressed by <em>distillation</em> and <em>quantization</em>, and delivered through the <em>application layer</em> on your device. Four stages. Four things to try and feel.</p>
+    <div class="whynow">
+      <div class="wk">Why now</div>
+      <p>Every organisation wanted AI in-house at once. Demand for accelerators outran supply, prices stayed high, and compute became the limit on what teams could actually ship. So the question inverted: instead of buying more hardware to fit the model, <em>shrink the model to fit the hardware you already own</em> — a server rack you've paid for, a laptop, a phone in someone's pocket.</p>
+      <p class="kick">That inversion is what this whole flow is about.</p>
+    </div>
     <div class="compress-ex" aria-label="Worked example of the compression pipeline">
       <div class="ce-title">One Example, End to End — Why Distillation Comes First</div>
       <div class="ce-row">
