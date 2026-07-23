@@ -211,6 +211,37 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .cost .ck{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase}
 .cost .cv{font-size:13.5px;color:var(--ink);margin-top:4px;font-weight:500}
 
+/* ---------- precision ladder ---------- */
+.ladder{margin-top:16px;border:1px solid var(--line);border-radius:10px;background:var(--panel-2);overflow:hidden}
+.lrow{display:grid;grid-template-columns:80px 98px 1fr;gap:12px;align-items:baseline;padding:11px 15px;border-top:1px solid rgba(212,175,106,.09)}
+.lrow:first-child{border-top:none}
+.lrow .lb{font-family:var(--mono);font-size:12.5px;color:var(--gold);letter-spacing:.04em}
+.lrow .lx{font-family:var(--mono);font-size:11.5px;color:var(--ink)}
+.lrow .ld{font-size:13px;color:var(--dim);line-height:1.45}
+.lrow.exp .lb,.lrow.exp .lx{color:var(--faint)}
+.lrow.exp .ld{color:var(--faint)}
+@media (max-width:600px){
+  .lrow{grid-template-columns:76px 1fr;gap:3px 10px}
+  .lrow .lx{grid-column:2}
+  .lrow .ld{grid-column:2}
+}
+
+/* ---------- pipeline recap table ---------- */
+.ptable{margin-top:16px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel-2)}
+.pt-head,.pt-row{display:grid;grid-template-columns:148px 1fr 1.25fr;gap:16px;padding:13px 16px}
+.pt-head{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:var(--faint);text-transform:uppercase;border-bottom:1px solid var(--line)}
+.pt-row{border-top:1px solid rgba(212,175,106,.09);align-items:baseline}
+.pt-s{font-family:var(--display);font-size:14.5px;color:var(--gold);letter-spacing:.03em}
+.pt-c{font-size:13px;color:var(--ink);line-height:1.45}
+.pt-i{font-size:13px;color:var(--dim);line-height:1.45}
+.pt-row.sum{background:rgba(212,175,106,.05)}
+@media (max-width:760px){
+  .pt-head{display:none}
+  .pt-row{grid-template-columns:1fr;gap:5px;padding:15px 16px}
+  .pt-c::before{content:"CHANGES · ";font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--faint)}
+  .pt-i::before{content:"UNLOCKS · ";font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--faint)}
+}
+
 /* ---------- worked build : stepper ---------- */
 .wb-top{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px}
 .wb-stat{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:11px 13px}
@@ -447,6 +478,16 @@ footer .sig{font-family:var(--mono);letter-spacing:.08em;font-size:11.5px;color:
       </div>
       <p class="note"><b>Feel it:</b> drag to INT8 — the dots barely leave the curve, yet memory falls 4×. Drag to INT4 and watch the staircase appear. That staircase <em>is</em> the quality trade you're making for a phone-sized model.</p>
       <p class="note"><b>Required, or just storage?</b> Neither exactly. On a big cloud GPU it's an <em>optimization</em> — but not only of storage: generating each token streams all weights through the chip, so 4× smaller weights ≈ 4× less data moved ≈ faster, cheaper serving. On constrained hardware it's a <em>prerequisite</em> — no quantization, no model on the phone. And it's applied <em>after</em> training, which is why it sits here, downstream, in the flow.</p>
+
+      <div class="panel-title" style="margin-top:26px">The precision ladder</div>
+      <div class="ladder">
+        <div class="lrow"><span class="lb">FP32</span><span class="lx">32-bit</span><span class="ld">Full precision. The reference point — and huge files.</span></div>
+        <div class="lrow"><span class="lb">FP16 / BF16</span><span class="lx">16-bit · 2×</span><span class="ld">Half precision, near-identical quality. The normal way models are trained and served today.</span></div>
+        <div class="lrow"><span class="lb">INT8</span><span class="lx">8-bit · 4×</span><span class="ld">Slight quality drop, rarely noticeable. The safe default for squeezing onto smaller hardware.</span></div>
+        <div class="lrow"><span class="lb">INT4</span><span class="lx">4-bit · 8×</span><span class="ld">Real quality loss, but often acceptable — and the step that makes phone-sized models possible.</span></div>
+        <div class="lrow exp"><span class="lb">~1-bit</span><span class="lx">research</span><span class="ld">Extreme compression using ternary weights. Promising, still experimental — not something to ship on today.</span></div>
+      </div>
+      <p class="note"><b>Read the multipliers against FP32.</b> Elsewhere on this page the worked example starts from FP16, so INT4 shows as 4× there rather than 8× — same compression, different starting point. Always ask "smaller than <em>what</em>?"</p>
     </div>
   </div>
 </section>
@@ -560,6 +601,31 @@ llama-quantize model-f16.gguf model-Q4_K_M.gguf Q4_K_M</pre></div>
         <div class="path-node" data-node="quant"><div class="nk">Quantized</div><div class="nt">On-device</div></div>
       </div>
       <div class="verdict" id="verdict">Select a use case above — the pipeline lights up the path that fits, and explains which of the four concepts made it possible.</div>
+
+      <div class="panel-title" style="margin-top:28px">Recap · How each stage shapes what's possible</div>
+      <div class="ptable">
+        <div class="pt-head"><span>Stage</span><span>What changes</span><span>What it unlocks</span></div>
+        <div class="pt-row">
+          <span class="pt-s">Open weights</span>
+          <span class="pt-c">Anyone can download, inspect and modify the model</span>
+          <span class="pt-i">Self-hosted apps, fine-tuned specialists, air-gapped deployments, no vendor lock-in</span>
+        </div>
+        <div class="pt-row">
+          <span class="pt-s">Distillation</span>
+          <span class="pt-c">Large → small, with the behaviour that matters preserved</span>
+          <span class="pt-i">Affordable inference, edge deployment, real-time response, domain specialists that beat generalists in their lane</span>
+        </div>
+        <div class="pt-row">
+          <span class="pt-s">Quantization</span>
+          <span class="pt-c">32-bit → 4-bit precision per weight</span>
+          <span class="pt-i">Phone and IoT apps, up to 8× less memory, faster tokens, cheaper serving</span>
+        </div>
+        <div class="pt-row sum">
+          <span class="pt-s">Application layer</span>
+          <span class="pt-c">All three combined, chosen per constraint</span>
+          <span class="pt-i">New categories: private on-premise AI, offline agents, assistants with no per-token cost</span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
