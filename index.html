@@ -206,6 +206,34 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .cost .ck{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase}
 .cost .cv{font-size:13.5px;color:var(--ink);margin-top:4px;font-weight:500}
 
+/* ---------- worked build : stepper ---------- */
+.wb-top{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px}
+.wb-stat{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:11px 13px}
+.wb-stat .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase}
+.wb-stat .v{font-family:var(--mono);font-size:17px;color:var(--gold);margin-top:4px;transition:color .3s}
+.wb-stat .v small{font-size:11px;color:var(--dim)}
+.wb-scope{margin-top:9px}
+.wb-scope .bar{height:5px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden}
+.wb-scope .bar i{display:block;height:100%;background:var(--gold);border-radius:3px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.wb-dots{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.wb-dot{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--faint);font-family:var(--mono);font-size:11px;display:flex;align-items:center;justify-content:center;transition:all .2s;padding:0}
+.wb-dot.on{border-color:var(--gold);background:var(--gold);color:#0A0A0C;font-weight:600}
+.wb-dot.done{border-color:var(--line-strong);color:var(--gold)}
+.wb-card{background:var(--panel-2);border:1px solid var(--line-strong);border-radius:12px;padding:18px 20px;min-height:270px}
+.wb-card .st{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase}
+.wb-card h4{font-family:var(--display);font-size:20px;letter-spacing:.03em;margin:8px 0 10px;color:var(--ink);font-weight:600}
+.wb-card .body{font-size:13.5px;color:var(--dim);line-height:1.6}
+.wb-card .body em{color:var(--ink);font-style:normal;font-weight:500}
+.wb-art{background:var(--panel);border:1px solid var(--line);border-left:2px solid var(--gold);border-radius:8px;padding:11px 13px;margin-top:13px;overflow-x:auto}
+.wb-art pre{font-family:var(--mono);font-size:11.5px;line-height:1.75;color:var(--ink);white-space:pre}
+.wb-art pre i{color:var(--faint);font-style:normal}
+.wb-art pre b{color:var(--gold);font-weight:400}
+.wb-got{margin-top:13px;font-size:12.5px;color:var(--dim);border-left:2px solid var(--line-strong);padding-left:11px}
+.wb-got b{color:var(--gold);font-weight:600}
+.wb-nav{display:flex;gap:9px;margin-top:16px;align-items:center;flex-wrap:wrap}
+.wb-nav .pos{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--faint)}
+@media (max-width:820px){.wb-top{grid-template-columns:1fr}}
+
 /* ---------- corollary : moat builder ---------- */
 .moat-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
 .moat-opt{border:1px solid var(--line);background:var(--panel-2);border-radius:10px;padding:13px 12px;text-align:left;color:var(--dim);font-size:12.5px;line-height:1.4;transition:all .18s}
@@ -470,6 +498,33 @@ llama-quantize model-f16.gguf model-Q4_K_M.gguf Q4_K_M</pre></div>
         <div class="step"><span class="n">4</span><span class="sx"><b>Evaluate on a domain eval suite</b>The step people skip and regret. Without it you can't tell whether the student learned the judgment or just the phrasing.</span></div>
         <p class="note"><b>The reality check:</b> most teams never distill. They take an existing small open model and quantize it — because that's one command, while distillation is a research project needing proprietary data. Which is precisely why quantization is the commodity move anyone can make, and distillation on <em>your own</em> data is the part that stays defensible.</p>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WORKED BUILD ================= -->
+<section class="stage" id="sw">
+  <div class="wrap">
+    <div class="stage-head"><span class="stage-num">WORKED BUILD</span><h2>Shrinking One For Yourself</h2></div>
+    <p class="lede">Abstract until you do it. So here's stages 02–03 run end to end for <strong>one narrow domain — a product management assistant</strong> — from a datacenter-sized teacher to a file on a laptop or phone. Step through it and watch the size fall as the scope narrows.</p>
+
+    <div class="panel">
+      <div class="panel-title">Demo · Build a Domain SLM <span class="free-tag">FREE · OFFLINE</span></div>
+      <div class="wb-top">
+        <div class="wb-stat"><div class="k">Model size</div><div class="v" id="wbSize">140 <small>GB</small></div></div>
+        <div class="wb-stat"><div class="k">What it can do</div><div class="v" id="wbScope" style="font-size:13px">Everything</div>
+          <div class="wb-scope"><div class="bar"><i id="wbScopeBar" style="width:100%"></i></div></div>
+        </div>
+        <div class="wb-stat"><div class="k">Runs on</div><div class="v" id="wbRuns" style="font-size:13px">Datacenter</div></div>
+      </div>
+      <div class="wb-dots" id="wbDots"></div>
+      <div class="wb-card" id="wbCard"></div>
+      <div class="wb-nav">
+        <button class="btn" id="wbPrev">← Back</button>
+        <button class="btn primary" id="wbNext">Next step →</button>
+        <span class="pos" id="wbPos">STEP 1 OF 7</span>
+      </div>
+      <p class="note"><b>Numbers are illustrative</b> — real ratios depend on how narrow your domain is and how much quality you'll trade. The <em>shape</em> of the process is what matters, and it's the same for any domain: legal drafting, crop advisory, claims triage, tax queries.</p>
     </div>
   </div>
 </section>
@@ -877,6 +932,110 @@ var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-moti
       panes.forEach(function(p){ p.classList.toggle("on", p.getAttribute("data-pane") === t); });
     });
   });
+})();
+
+/* ============ WORKED BUILD : DOMAIN SLM STEPPER ============ */
+(function workedBuild(){
+  var steps = [
+    {
+      st:"Stage 02 · Step 1",
+      h:"Scope the domain — ruthlessly",
+      size:"140 <small>GB</small>", scope:"Everything", bar:100, runs:"Datacenter",
+      body:"Before any code, write down what the model must do — and what it may fail at. Narrow scope is not a limitation here, it's <em>the entire source of the shrink</em>.",
+      art:"<pre><b>MUST DO</b>\n  draft user stories from a feature brief\n  critique a PRD for missing acceptance criteria\n  turn a retro transcript into action items\n  size a backlog against a prioritisation frame\n\n<b>MAY FAIL AT</b>\n  writing code · legal advice · anything not PM</pre>",
+      got:"<b>Gotcha:</b> teams write the MUST DO list and skip the MAY FAIL AT list. The second list is what lets you drop parameters without guilt — and what your eval suite will later hold you to."
+    },
+    {
+      st:"Stage 02 · Step 2",
+      h:"Build the teaching set",
+      size:"140 <small>GB</small>", scope:"Everything", bar:100, runs:"Datacenter",
+      body:"Collect real prompts from your domain — a few thousand is a workable start. This is the slow, unglamorous step, and it is <em>the only part nobody can copy from you</em>.",
+      art:"<pre><i># sources that actually work</i>\n  your own archive of PRDs and specs\n  anonymised tickets and sprint retros\n  questions your PMs ask each other in chat\n  expert-written ideal answers for hard cases\n\n<b>~5,000–10,000 domain prompts</b></pre>",
+      got:"<b>This is the moat step.</b> Weights are free and public; a decade of your team's product judgment, written down as examples, is not. Everything else in this walkthrough is commodity work."
+    },
+    {
+      st:"Stage 02 · Step 3",
+      h:"Capture what the teacher does",
+      size:"140 <small>GB</small>", scope:"Everything", bar:100, runs:"Datacenter",
+      body:"Run every prompt through the big model and save its responses. If you can run the teacher yourself — open weights — save its <em>probability distributions</em> too, not just the final text. That's the soft-target signal that makes distillation far richer than plain imitation.",
+      art:"<pre>for prompt in domain_prompts:\n    out = teacher(prompt, return_logits=<b>True</b>)\n    save(prompt, out.text, out.logits)\n\n<i># logits need the weights in your hands.</i>\n<i># API-only teacher → text imitation instead.</i></pre>",
+      got:"<b>Access decides depth.</b> This is Stage 01 showing up as a hard constraint: closed teacher, shallower student."
+    },
+    {
+      st:"Stage 02 · Step 4",
+      h:"Pick a student base — don't start from scratch",
+      size:"6 <small>GB</small>", scope:"Everything, weakly", bar:100, runs:"Workstation",
+      body:"Take a small open base model — a few billion parameters. It already knows grammar, structure and reasoning basics. You're not teaching it language; you're teaching it <em>your domain's judgment</em>.",
+      art:"<pre>student  ≈ 3B parameters · FP16 · <b>~6 GB</b>\nteacher  ≈ 70B parameters · <b>~140 GB</b>\n\n<i># the drop is already 23× — before any training.</i>\n<i># it's currently mediocre at everything.</i></pre>",
+      got:"<b>Why not from scratch?</b> Pre-training costs millions and needs internet-scale data. Distillation is a transfer, not a birth."
+    },
+    {
+      st:"Stage 02 · Step 5",
+      h:"Train the student",
+      size:"6 <small>GB</small> <small>+ 40 MB adapter</small>", scope:"PM tasks", bar:9, runs:"Workstation",
+      body:"Train the student to match the teacher on your prompts — against the saved distributions where you have them. In practice most teams train a <em>LoRA adapter</em> rather than the full model: far cheaper, and the base stays reusable.",
+      art:"<pre><i># conceptually</i>\nloss = KL( student(prompt) ‖ teacher(prompt) )\n\n<i># practically, on one or two GPUs</i>\ntrl <b>GKDTrainer</b>  <i># distillation on soft targets</i>\npeft <b>LoRA</b>       <i># train ~40 MB, freeze the rest</i>\n\ndays, not weeks — for a domain this narrow</pre>",
+      got:"<b>Scope is what shrank it.</b> The student didn't get smarter than a 3B model; it stopped spending capacity on poetry, code and trivia. Inside PM tasks it can now track the teacher closely — outside them it's worse than before."
+    },
+    {
+      st:"Stage 02 · Step 6",
+      h:"Prove it actually learned",
+      size:"6 <small>GB</small> <small>+ 40 MB adapter</small>", scope:"PM tasks · verified", bar:9, runs:"Workstation",
+      body:"Hold back domain tasks the student never saw, and score them — against the teacher, and against your own experts. Without this you cannot tell whether it learned the <em>judgment</em> or merely the <em>phrasing</em>.",
+      art:"<pre><b>held-out PM eval · 400 tasks</b>\n\n  acceptance criteria completeness   82%\n  story splitting quality            79%\n  retro → action item accuracy       86%\n  <i>refusal on out-of-scope requests</i>   <i>94%</i>\n\nteacher on same set: 84% avg</pre>",
+      got:"<b>The step people skip and regret.</b> Note the last row — measuring what it <em>declines</em> to do matters as much as what it does. A narrow model that bluffs outside its scope is worse than no model."
+    },
+    {
+      st:"Stage 03 · Step 7",
+      h:"Quantize and ship it",
+      size:"1.8 <small>GB</small>", scope:"PM tasks · verified", bar:9, runs:"📱 Phone · Tab · Laptop",
+      body:"Merge the adapter into the base, convert, and compress to 4-bit. Hours of work, one machine, no data needed. Then it's a single file you bundle in the app — <em>offline, no API bill, nothing leaves the device</em>.",
+      art:"<pre>python convert_hf_to_gguf.py ./pm-student --outtype f16\nllama-quantize pm-f16.gguf <b>pm-Q4_K_M.gguf</b> Q4_K_M\n\n6 GB → <b>1.8 GB</b>\n\n<i># re-run the eval after quantizing.</i>\n<i># expect a small drop; confirm it's small.</i></pre>",
+      got:"<b>Done.</b> A datacenter-scale capability, narrowed to one domain and compressed to a file a PM can carry on a phone in a train tunnel. That's the whole cascade, in one build."
+    }
+  ];
+
+  var i = 0;
+  var card = document.getElementById("wbCard");
+  var dots = document.getElementById("wbDots");
+  var pos = document.getElementById("wbPos");
+  var elSize = document.getElementById("wbSize");
+  var elScope = document.getElementById("wbScope");
+  var elBar = document.getElementById("wbScopeBar");
+  var elRuns = document.getElementById("wbRuns");
+  var prev = document.getElementById("wbPrev");
+  var next = document.getElementById("wbNext");
+
+  steps.forEach(function(s, n){
+    var d = document.createElement("button");
+    d.className = "wb-dot";
+    d.textContent = n+1;
+    d.addEventListener("click", function(){ i = n; paint(); });
+    dots.appendChild(d);
+  });
+
+  function paint(){
+    var s = steps[i];
+    card.innerHTML = "<div class='st'>"+s.st+"</div><h4>"+s.h+"</h4>" +
+      "<div class='body'>"+s.body+"</div>" +
+      "<div class='wb-art'>"+s.art+"</div>" +
+      "<div class='wb-got'>"+s.got+"</div>";
+    elSize.innerHTML = s.size;
+    elScope.textContent = s.scope;
+    elBar.style.width = s.bar+"%";
+    elRuns.textContent = s.runs;
+    pos.textContent = "STEP "+(i+1)+" OF "+steps.length;
+    var kids = dots.children;
+    for(var n=0;n<kids.length;n++){
+      kids[n].className = "wb-dot" + (n===i ? " on" : (n<i ? " done" : ""));
+    }
+    prev.disabled = (i===0);
+    prev.style.opacity = i===0 ? ".4" : "1";
+    next.textContent = i===steps.length-1 ? "Start over" : "Next step →";
+  }
+  prev.addEventListener("click", function(){ if(i>0){ i--; paint(); } });
+  next.addEventListener("click", function(){ i = (i+1) % steps.length; paint(); });
+  paint();
 })();
 
 /* ============ COROLLARY : MOAT BUILDER ============ */
