@@ -2,1222 +2,609 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0A0A0C">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0e17">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="CASCADE">
-<meta name="description" content="CASCADE — AI capability flow from frontier model to downstream systems: open vs closed weights, distillation, quantization, and the application layer. Four interactive demos, fully free and offline.">
-<title>CASCADE · AI Capability Flow — Frontier Model to Downstream Systems</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<meta name="description" content="Interactive guide: how AI capability flows from frontier labs to your devices">
+<title>AI Capability Flow</title>
 <style>
-:root{
-  --bg:#0A0A0C;
-  --panel:#121216;
-  --panel-2:#17171C;
-  --line:rgba(212,175,106,.16);
-  --line-strong:rgba(212,175,106,.34);
-  --gold:#D4AF6A;
-  --gold-soft:rgba(212,175,106,.12);
-  --ink:#EDE9E0;
-  --dim:#9A958A;
-  --faint:#5F5B52;
-  --good:#7FB58A;
-  --deny:#C4705B;
-  --display:'Cinzel',serif;
-  --body:'DM Sans',system-ui,sans-serif;
-  --mono:'DM Mono',ui-monospace,monospace;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-::selection{background:var(--gold);color:#0A0A0C}
-button{font-family:var(--body);cursor:pointer}
-canvas{display:block}
-
-/* ---------- shared ---------- */
-.wrap{max-width:980px;margin:0 auto;padding:0 22px}
-.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold)}
-.stage-head{display:flex;align-items:baseline;gap:14px;margin-bottom:10px}
-.stage-num{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.15em}
-h2{font-family:var(--display);font-weight:600;font-size:clamp(24px,4.6vw,34px);letter-spacing:.04em;color:var(--ink)}
-.lede{color:var(--dim);max-width:640px;font-size:15.5px;margin-top:10px}
-.lede strong{color:var(--ink);font-weight:600}
-section.stage{padding:74px 0 30px;border-top:1px solid var(--line)}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;margin-top:26px}
-.panel-title{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);margin-bottom:16px;display:flex;align-items:center;gap:10px}
-.panel-title::before{content:"";width:7px;height:7px;border:1px solid var(--gold);transform:rotate(45deg);display:inline-block}
-.free-tag{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--good);border:1px solid rgba(127,181,138,.35);padding:3px 8px;border-radius:20px}
-.note{font-size:13px;color:var(--dim);border-left:2px solid var(--line-strong);padding:2px 0 2px 12px;margin-top:16px}
-.note b{color:var(--gold);font-weight:600}
-.btn{background:transparent;border:1px solid var(--line-strong);color:var(--ink);padding:10px 16px;border-radius:9px;font-size:13.5px;font-weight:500;transition:all .18s ease}
-.btn:hover{border-color:var(--gold);background:var(--gold-soft)}
-.btn.primary{background:var(--gold);border-color:var(--gold);color:#0A0A0C;font-weight:600}
-.btn.primary:hover{background:#E2C382}
-.btn:focus-visible,.seg button:focus-visible,input[type=range]:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-.seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:10px;overflow:hidden}
-.seg button{background:transparent;border:none;color:var(--dim);padding:9px 16px;font-size:13px;font-weight:500;transition:all .15s}
-.seg button.on{background:var(--gold);color:#0A0A0C;font-weight:600}
-.mono{font-family:var(--mono)}
-
-/* ---------- hero ---------- */
-header.hero{min-height:88vh;display:flex;flex-direction:column;justify-content:center;position:relative;padding:70px 0 40px}
-.hero h1{font-family:var(--display);font-weight:700;font-size:clamp(44px,9vw,84px);letter-spacing:.06em;line-height:1.05;margin:14px 0 6px}
-.hero h1 .dot{color:var(--gold)}
-.hero .sub{font-size:clamp(15px,2.4vw,18px);color:var(--dim);max-width:560px;margin-top:14px}
-.hero .sub em{color:var(--ink);font-style:normal;font-weight:600}
-.flow-rail{margin-top:44px;display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative;border:1px solid var(--line);border-radius:14px;background:var(--panel);overflow:hidden}
-.flow-cell{padding:18px 16px 20px;border-left:1px solid var(--line);position:relative;text-decoration:none;color:inherit;transition:background .2s}
-.flow-cell:first-child{border-left:none}
-.flow-cell:hover{background:var(--gold-soft)}
-.flow-cell .k{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--faint)}
-.flow-cell .t{font-family:var(--display);font-size:15px;letter-spacing:.05em;margin-top:6px;color:var(--ink)}
-.flow-cell .d{font-size:12px;color:var(--dim);margin-top:5px;line-height:1.45}
-.flow-cell .arrow{position:absolute;right:-7px;top:50%;transform:translateY(-50%);color:var(--gold);font-size:13px;z-index:2}
-.flow-cell:last-child .arrow{display:none}
-#heroFlow{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.5}
-.scroll-hint{margin-top:34px;font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--faint)}
-.whynow{margin-top:30px;border-left:2px solid var(--gold);padding:2px 0 2px 18px;max-width:700px}
-.whynow .wk{font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--gold);text-transform:uppercase;margin-bottom:8px}
-.whynow p{font-size:14.5px;color:var(--dim);line-height:1.6}
-.whynow p em{color:var(--ink);font-style:normal;font-weight:500}
-.whynow p.kick{margin-top:9px;color:var(--ink);font-size:15px}
-.compress-ex{margin-top:34px;border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:18px 20px}
-.ce-title{font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--gold);text-transform:uppercase;margin-bottom:14px}
-.ce-row{display:flex;align-items:stretch;gap:10px;flex-wrap:wrap}
-.ce-cell{flex:1;min-width:150px;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:12px 13px}
-.ce-cell .m{font-family:var(--mono);font-size:13px;color:var(--ink)}
-.ce-cell .m b{color:var(--gold);font-weight:500}
-.ce-cell .gb{font-family:var(--mono);font-size:19px;color:var(--gold);margin-top:6px}
-.ce-cell .gb small{font-size:11px;color:var(--dim)}
-.ce-bar{height:5px;background:rgba(255,255,255,.05);border-radius:3px;margin-top:9px;overflow:hidden}
-.ce-bar i{display:block;height:100%;background:var(--gold);border-radius:3px}
-.ce-cell .tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;color:var(--dim);margin-top:8px}
-.ce-arrow{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px;min-width:86px}
-.ce-arrow .op{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--gold);text-transform:uppercase}
-.ce-arrow .sym{color:var(--gold);font-size:15px}
-.ce-arrow .fx{font-family:var(--mono);font-size:10px;color:var(--dim)}
-.ce-why{margin-top:14px;font-size:13px;color:var(--dim);line-height:1.55}
-.ce-why em{color:var(--ink);font-style:normal;font-weight:500}
-@media (max-width:680px){
-  .ce-row{flex-direction:column}
-  .ce-arrow{flex-direction:row;min-width:0;padding:2px 0}
-  .ce-arrow .sym{transform:rotate(90deg)}
-}
-
-/* ---------- stage 1 : weight vault ---------- */
-.vault-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:22px;margin-top:18px}
-.wmatrix{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:16px;position:relative;overflow:hidden}
-.wmatrix table{width:100%;border-collapse:collapse}
-.wmatrix td{font-family:var(--mono);font-size:11.5px;color:var(--dim);padding:5px 4px;text-align:right;transition:filter .4s,opacity .4s}
-.wmatrix td.hot{color:var(--gold)}
-.wmatrix.locked td{filter:blur(5px);opacity:.55}
-.vault-veil{position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:8px;background:rgba(10,10,12,.35);text-align:center;padding:20px}
-.wmatrix.locked .vault-veil{display:flex}
-.vault-veil .lock{font-size:26px}
-.vault-veil p{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--ink)}
-.acts{display:flex;flex-direction:column;gap:9px}
-.act{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:transparent;border-radius:9px;padding:10px 13px;color:var(--ink);font-size:13.5px;text-align:left;transition:border-color .15s}
-.act:hover{border-color:var(--gold)}
-.act .st{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.12em;padding:3px 8px;border-radius:20px;border:1px solid transparent}
-.act .st.ok{color:var(--good);border-color:rgba(127,181,138,.4)}
-.act .st.no{color:var(--deny);border-color:rgba(196,112,91,.4)}
-.vault-say{margin-top:14px;min-height:44px;font-size:13.5px;color:var(--dim);border:1px dashed var(--line);border-radius:9px;padding:11px 14px}
-.vault-say b{color:var(--ink)}
-
-/* ---------- stage 2 : distillation ---------- */
-.distill-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:6px}
-.model-card{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:16px}
-.model-card h4{font-family:var(--display);font-size:14px;letter-spacing:.08em;display:flex;align-items:baseline;gap:8px}
-.model-card h4 .sz{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--gold)}
-.bars{margin-top:14px;display:flex;flex-direction:column;gap:9px}
-.bar-row{display:grid;grid-template-columns:74px 1fr 44px;align-items:center;gap:9px}
-.bar-row .lbl{font-family:var(--mono);font-size:11.5px;color:var(--dim)}
-.bar-track{height:14px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
-.bar-fill{height:100%;background:var(--faint);border-radius:4px;transition:width .5s cubic-bezier(.2,.8,.2,1),background .5s}
-.teacher .bar-fill{background:var(--gold)}
-.bar-row .val{font-family:var(--mono);font-size:11px;color:var(--dim);text-align:right}
-.prompt-chip{font-family:var(--mono);font-size:12px;color:var(--ink);background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:9px 13px;display:inline-block;margin-bottom:14px}
-.prompt-chip span{color:var(--gold)}
-.distill-ctl{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;align-items:center}
-.match-meter{margin-top:16px}
-.match-meter .row{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--dim);margin-bottom:6px}
-.match-meter .row b{color:var(--gold)}
-.meter-track{height:8px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden}
-.meter-fill{height:100%;width:8%;background:linear-gradient(90deg,#8a713f,var(--gold));border-radius:4px;transition:width .5s}
-
-/* ---------- stage 3 : quantization ---------- */
-.q-top{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;margin-bottom:16px}
-.q-slider{display:flex;flex-direction:column;gap:8px}
-input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;background:var(--line-strong);border-radius:2px}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:var(--gold);border:3px solid #0A0A0C;box-shadow:0 0 0 1px var(--gold)}
-input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--gold);border:2px solid #0A0A0C}
-.q-stops{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--faint)}
-.q-stops span.on{color:var(--gold)}
-.q-badge{font-family:var(--mono);font-size:13px;color:#0A0A0C;background:var(--gold);border-radius:8px;padding:8px 14px;font-weight:500;white-space:nowrap}
-.q-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:22px}
-.q-canvas-box{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:12px}
-.q-canvas-box .cap{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--faint);margin-top:8px;text-transform:uppercase}
-.q-stats{display:flex;flex-direction:column;gap:14px}
-.q-stat{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
-.q-stat .k{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--faint);text-transform:uppercase}
-.q-stat .v{font-family:var(--mono);font-size:20px;color:var(--gold);margin-top:4px}
-.q-stat .v small{font-size:12px;color:var(--dim)}
-.devices{display:flex;flex-direction:column;gap:7px;margin-top:4px}
-.dev{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--faint);transition:color .3s}
-.dev .led{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.08);transition:background .3s,box-shadow .3s}
-.dev.fit{color:var(--ink)}
-.dev.fit .led{background:var(--good);box-shadow:0 0 8px rgba(127,181,138,.5)}
-.dev .cap-gb{margin-left:auto;font-family:var(--mono);font-size:11px}
-
-/* ---------- stage 4 : deployment fitter ---------- */
-.cases{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:6px}
-.case-btn{border:1px solid var(--line);background:var(--panel-2);border-radius:10px;padding:13px 12px;text-align:left;color:var(--dim);font-size:12.5px;line-height:1.4;transition:all .18s}
-.case-btn .ic{font-size:19px;display:block;margin-bottom:7px}
-.case-btn b{display:block;color:var(--ink);font-size:13px;margin-bottom:3px;font-weight:600}
-.case-btn.on{border-color:var(--gold);background:var(--gold-soft);color:var(--ink)}
-.path-map{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:20px}
-.path-node{border:1px solid var(--line);border-radius:9px;padding:11px 10px;text-align:center;position:relative;opacity:.4;transition:all .4s}
-.path-node .nk{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--faint);text-transform:uppercase}
-.path-node .nt{font-size:12.5px;color:var(--ink);margin-top:4px;font-weight:500}
-.path-node.lit{opacity:1;border-color:var(--gold);background:var(--gold-soft);box-shadow:0 0 16px rgba(212,175,106,.12)}
-.verdict{margin-top:18px;border:1px solid var(--line-strong);border-radius:10px;padding:16px 18px;background:var(--panel-2);font-size:14px;color:var(--dim);min-height:70px}
-.verdict b{color:var(--gold)}
-.verdict .why{margin-top:8px;font-size:13px}
-.verdict .why em{color:var(--ink);font-style:normal;font-weight:500}
-
-/* ---------- in practice : file tree + commands ---------- */
-.tabs{display:inline-flex;border:1px solid var(--line-strong);border-radius:10px;overflow:hidden;flex-wrap:wrap}
-.tabs button{background:transparent;border:none;color:var(--dim);padding:9px 15px;font-size:12.5px;font-weight:500;transition:all .15s;font-family:var(--body)}
-.tabs button.on{background:var(--gold);color:#0A0A0C;font-weight:600}
-.tabpane{display:none;margin-top:18px}
-.tabpane.on{display:block}
-.tree{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:16px 18px;overflow-x:auto}
-.tree pre{font-family:var(--mono);font-size:12px;line-height:1.85;color:var(--dim);white-space:pre}
-.tree pre b{color:var(--gold);font-weight:400}
-.tree pre i{color:var(--faint);font-style:normal}
-.tree pre u{color:var(--ink);text-decoration:none}
-.cmd{background:var(--panel-2);border:1px solid var(--line);border-left:2px solid var(--gold);border-radius:8px;padding:13px 15px;margin-top:12px;overflow-x:auto}
-.cmd pre{font-family:var(--mono);font-size:12px;line-height:1.75;color:var(--ink);white-space:pre}
-.cmd pre i{color:var(--faint);font-style:normal}
-.step{display:flex;gap:12px;margin-top:14px;align-items:flex-start}
-.step .n{font-family:var(--mono);font-size:11px;color:#0A0A0C;background:var(--gold);width:21px;height:21px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
-.step .sx{font-size:13.5px;color:var(--dim);line-height:1.55}
-.step .sx b{color:var(--ink);font-weight:600;display:block;margin-bottom:2px}
-.cost-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
-.cost{flex:1;min-width:130px;background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:11px 13px}
-.cost .ck{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase}
-.cost .cv{font-size:13.5px;color:var(--ink);margin-top:4px;font-weight:500}
-
-/* ---------- precision ladder ---------- */
-.ladder{margin-top:16px;border:1px solid var(--line);border-radius:10px;background:var(--panel-2);overflow:hidden}
-.lrow{display:grid;grid-template-columns:80px 98px 1fr;gap:12px;align-items:baseline;padding:11px 15px;border-top:1px solid rgba(212,175,106,.09)}
-.lrow:first-child{border-top:none}
-.lrow .lb{font-family:var(--mono);font-size:12.5px;color:var(--gold);letter-spacing:.04em}
-.lrow .lx{font-family:var(--mono);font-size:11.5px;color:var(--ink)}
-.lrow .ld{font-size:13px;color:var(--dim);line-height:1.45}
-.lrow.exp .lb,.lrow.exp .lx{color:var(--faint)}
-.lrow.exp .ld{color:var(--faint)}
-@media (max-width:600px){
-  .lrow{grid-template-columns:76px 1fr;gap:3px 10px}
-  .lrow .lx{grid-column:2}
-  .lrow .ld{grid-column:2}
-}
-
-/* ---------- pipeline recap table ---------- */
-.ptable{margin-top:16px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel-2)}
-.pt-head,.pt-row{display:grid;grid-template-columns:148px 1fr 1.25fr;gap:16px;padding:13px 16px}
-.pt-head{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:var(--faint);text-transform:uppercase;border-bottom:1px solid var(--line)}
-.pt-row{border-top:1px solid rgba(212,175,106,.09);align-items:baseline}
-.pt-s{font-family:var(--display);font-size:14.5px;color:var(--gold);letter-spacing:.03em}
-.pt-c{font-size:13px;color:var(--ink);line-height:1.45}
-.pt-i{font-size:13px;color:var(--dim);line-height:1.45}
-.pt-row.sum{background:rgba(212,175,106,.05)}
-@media (max-width:760px){
-  .pt-head{display:none}
-  .pt-row{grid-template-columns:1fr;gap:5px;padding:15px 16px}
-  .pt-c::before{content:"CHANGES · ";font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--faint)}
-  .pt-i::before{content:"UNLOCKS · ";font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--faint)}
-}
-
-/* ---------- worked build : stepper ---------- */
-.wb-top{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px}
-.wb-stat{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:11px 13px}
-.wb-stat .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase}
-.wb-stat .v{font-family:var(--mono);font-size:17px;color:var(--gold);margin-top:4px;transition:color .3s}
-.wb-stat .v small{font-size:11px;color:var(--dim)}
-.wb-scope{margin-top:9px}
-.wb-scope .bar{height:5px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden}
-.wb-scope .bar i{display:block;height:100%;background:var(--gold);border-radius:3px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
-.wb-dots{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
-.wb-dot{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--faint);font-family:var(--mono);font-size:11px;display:flex;align-items:center;justify-content:center;transition:all .2s;padding:0}
-.wb-dot.on{border-color:var(--gold);background:var(--gold);color:#0A0A0C;font-weight:600}
-.wb-dot.done{border-color:var(--line-strong);color:var(--gold)}
-.wb-card{background:var(--panel-2);border:1px solid var(--line-strong);border-radius:12px;padding:18px 20px;min-height:270px}
-.wb-card .st{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase}
-.wb-card h4{font-family:var(--display);font-size:20px;letter-spacing:.03em;margin:8px 0 10px;color:var(--ink);font-weight:600}
-.wb-card .body{font-size:13.5px;color:var(--dim);line-height:1.6}
-.wb-card .body em{color:var(--ink);font-style:normal;font-weight:500}
-.wb-art{background:var(--panel);border:1px solid var(--line);border-left:2px solid var(--gold);border-radius:8px;padding:11px 13px;margin-top:13px;overflow-x:auto}
-.wb-art pre{font-family:var(--mono);font-size:11.5px;line-height:1.75;color:var(--ink);white-space:pre}
-.wb-art pre i{color:var(--faint);font-style:normal}
-.wb-art pre b{color:var(--gold);font-weight:400}
-.wb-got{margin-top:13px;font-size:12.5px;color:var(--dim);border-left:2px solid var(--line-strong);padding-left:11px}
-.wb-got b{color:var(--gold);font-weight:600}
-.wb-nav{display:flex;gap:9px;margin-top:16px;align-items:center;flex-wrap:wrap}
-.wb-nav .pos{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--faint)}
-@media (max-width:820px){.wb-top{grid-template-columns:1fr}}
-
-/* ---------- corollary : moat builder ---------- */
-.moat-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
-.moat-opt{border:1px solid var(--line);background:var(--panel-2);border-radius:10px;padding:13px 12px;text-align:left;color:var(--dim);font-size:12.5px;line-height:1.4;transition:all .18s}
-.moat-opt .ic{font-size:19px;display:block;margin-bottom:7px}
-.moat-opt b{display:block;color:var(--ink);font-size:13px;margin-bottom:3px;font-weight:600}
-.moat-opt.on{border-color:var(--gold);background:var(--gold-soft);color:var(--ink)}
-.moat-opt .own{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--faint);display:inline-block;margin-top:8px;border:1px solid var(--line);padding:2px 8px;border-radius:20px}
-.moat-opt.on .own{color:var(--good);border-color:rgba(127,181,138,.4)}
-@media (max-width:820px){.moat-opts{grid-template-columns:1fr}}
-
-/* ---------- synthesis / footer ---------- */
-.synth{border:1px solid var(--line-strong);border-radius:16px;padding:34px 30px;margin:70px 0 20px;background:linear-gradient(180deg,var(--panel),var(--bg));text-align:center}
-.synth p.big{font-family:var(--display);font-size:clamp(17px,3vw,22px);line-height:1.65;letter-spacing:.02em;max-width:760px;margin:14px auto 0}
-.synth p.big span{color:var(--gold)}
-footer{padding:44px 0 60px;text-align:center;color:var(--faint);font-size:12.5px;border-top:1px solid var(--line);margin-top:60px}
-footer .sig{font-family:var(--mono);letter-spacing:.08em;font-size:11.5px;color:var(--dim)}
-
-@media (max-width:820px){
-  .flow-rail{grid-template-columns:1fr 1fr}
-  .flow-cell{border-top:1px solid var(--line)}
-  .flow-cell:nth-child(-n+2){border-top:none}
-  .flow-cell:nth-child(odd){border-left:none}
-  .vault-grid,.distill-grid,.q-grid{grid-template-columns:1fr}
-  .cases{grid-template-columns:1fr 1fr}
-  .path-map{grid-template-columns:1fr 1fr}
-  .q-top{grid-template-columns:1fr}
-}
-@media (prefers-reduced-motion:reduce){
-  *{transition:none!important;animation:none!important}
-  html{scroll-behavior:auto}
-}
+:root{--bg-deep:#0a0e17;--bg-card:#111827;--bg-elevated:#1a2332;--border-subtle:#1f2937;--border-active:#374151;--text-primary:#f3f4f6;--text-secondary:#9ca3af;--text-muted:#6b7280;--accent-cyan:#22d3ee;--accent-purple:#a78bfa;--accent-amber:#fbbf24;--accent-emerald:#34d399;--accent-rose:#fb7185;--accent-orange:#fb923c;--accent-blue:#60a5fa;--accent-pink:#f472b6;--font-mono:'SF Mono','Fira Code','Cascadia Code',monospace;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg-deep);color:var(--text-primary);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+.install-banner{position:fixed;top:0;left:0;right:0;background:linear-gradient(135deg,rgba(34,211,238,0.15),rgba(167,139,250,0.15));border-bottom:1px solid rgba(34,211,238,0.2);padding:12px 16px;display:none;align-items:center;justify-content:space-between;z-index:1000;backdrop-filter:blur(10px);}
+.install-banner.show{display:flex;}
+.install-text{font-size:13px;color:var(--text-secondary);}
+.install-text strong{color:var(--accent-cyan);}
+.install-btn{padding:6px 14px;border-radius:8px;border:1px solid var(--accent-cyan);background:rgba(34,211,238,0.15);color:var(--accent-cyan);font-size:12px;font-weight:600;cursor:pointer;margin-left:12px;}
+.install-close{background:none;border:none;color:var(--text-muted);font-size:18px;cursor:pointer;margin-left:8px;padding:0 4px;}
+.hero-section{padding:52px 20px 20px;text-align:center;position:relative;}
+.hero-title{font-size:24px;font-weight:800;margin-bottom:8px;background:linear-gradient(135deg,var(--accent-cyan),var(--accent-purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-subtitle{font-size:13px;color:var(--text-muted);margin-bottom:28px;max-width:440px;margin-left:auto;margin-right:auto;line-height:1.5;}
+.flow-diagram{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;margin-bottom:24px;padding:0 8px;}
+.flow-node{padding:9px 14px;border-radius:10px;font-size:11px;font-weight:600;cursor:pointer;transition:all .3s ease;position:relative;border:1.5px solid transparent;white-space:nowrap;user-select:none;}
+.flow-node:hover{transform:translateY(-2px);}
+.flow-node.active{border-color:currentColor;box-shadow:0 0 20px currentColor;}
+.node-frontier{background:rgba(34,211,238,0.1);color:var(--accent-cyan);border-color:rgba(34,211,238,0.3);}
+.node-distill{background:rgba(167,139,250,0.1);color:var(--accent-purple);border-color:rgba(167,139,250,0.3);}
+.node-quant{background:rgba(251,146,60,0.1);color:var(--accent-orange);border-color:rgba(251,146,60,0.3);}
+.node-device{background:rgba(52,211,153,0.1);color:var(--accent-emerald);border-color:rgba(52,211,153,0.3);}
+.node-moe{background:rgba(96,165,250,0.1);color:var(--accent-blue);border-color:rgba(96,165,250,0.3);}
+.node-spec{background:rgba(244,114,182,0.1);color:var(--accent-pink);border-color:rgba(244,114,182,0.3);}
+.node-agent{background:rgba(251,191,36,0.1);color:var(--accent-amber);border-color:rgba(251,191,36,0.3);}
+.flow-arrow{color:var(--text-muted);font-size:13px;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:.4;}50%{opacity:1;}}
+.tab-bar{display:flex;gap:2px;padding:0 12px;border-bottom:1px solid var(--border-subtle);overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+.tab-bar::-webkit-scrollbar{display:none;}
+.tab-btn{padding:10px 14px;background:none;border:none;color:var(--text-muted);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;position:relative;transition:color .2s;border-bottom:2px solid transparent;margin-bottom:-1px;user-select:none;}
+.tab-btn:hover{color:var(--text-secondary);}
+.tab-btn.active{color:var(--text-primary);border-bottom-color:var(--accent-cyan);}
+.content-area{padding:24px 14px 60px;max-width:700px;margin:0 auto;}
+.section-title{font-size:19px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:10px;}
+.section-badge{font-size:9px;padding:3px 8px;border-radius:20px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+.badge-concept{background:rgba(34,211,238,0.15);color:var(--accent-cyan);}
+.badge-demo{background:rgba(52,211,153,0.15);color:var(--accent-emerald);}
+.badge-new{background:rgba(96,165,250,0.15);color:var(--accent-blue);}
+.section-desc{color:var(--text-secondary);font-size:13.5px;line-height:1.6;margin-bottom:22px;}
+.card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:14px;padding:18px;margin-bottom:14px;transition:border-color .2s;}
+.card:hover{border-color:var(--border-active);}
+.card-title{font-size:14px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.card-body{font-size:13px;color:var(--text-secondary);line-height:1.65;}
+.card-body strong{color:var(--text-primary);}
+.card-body code{background:var(--bg-elevated);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:11.5px;color:var(--accent-cyan);}
+.demo-box{background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:12px;padding:18px;margin-top:14px;}
+.demo-controls{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.demo-btn{padding:7px 14px;border-radius:8px;border:1px solid var(--border-active);background:var(--bg-card);color:var(--text-primary);font-size:11.5px;font-weight:500;cursor:pointer;transition:all .2s;user-select:none;}
+.demo-btn:hover{background:var(--border-active);border-color:var(--text-muted);}
+.demo-btn.primary{background:rgba(34,211,238,0.15);border-color:rgba(34,211,238,0.4);color:var(--accent-cyan);}
+.demo-btn.primary:hover{background:rgba(34,211,238,0.25);}
+.demo-btn:disabled{opacity:.4;cursor:not-allowed;}
+.viz-canvas{width:100%;height:200px;background:var(--bg-deep);border-radius:10px;border:1px solid var(--border-subtle);position:relative;overflow:hidden;}
+.weight-grid{display:grid;grid-template-columns:repeat(20,1fr);gap:2px;padding:14px;}
+.weight-cell{aspect-ratio:1;border-radius:2px;transition:all .3s ease;cursor:pointer;}
+.weight-cell:hover{transform:scale(1.5);z-index:10;}
+.distill-container{display:flex;align-items:center;justify-content:space-between;padding:16px;gap:14px;}
+.model-box{flex:1;text-align:center;padding:14px;border-radius:10px;border:1px dashed var(--border-active);position:relative;}
+.model-box h4{font-size:12px;margin-bottom:8px;}
+.model-size-bar{height:7px;border-radius:4px;background:var(--bg-deep);margin-bottom:8px;overflow:hidden;}
+.model-size-fill{height:100%;border-radius:4px;transition:width .8s ease;}
+.model-params{font-size:10px;color:var(--text-muted);font-family:var(--font-mono);}
+.distill-arrow{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--accent-purple);}
+.distill-arrow span{font-size:10px;font-weight:600;white-space:nowrap;}
+.bit-visualizer{display:flex;flex-direction:column;gap:10px;padding:14px;}
+.bit-row{display:flex;align-items:center;gap:10px;}
+.bit-label{width:45px;font-size:11px;font-weight:600;font-family:var(--font-mono);color:var(--text-secondary);}
+.bit-blocks{flex:1;display:flex;gap:2px;flex-wrap:wrap;}
+.bit-block{width:12px;height:12px;border-radius:2px;transition:all .3s;}
+.bit-info{width:70px;font-size:10px;color:var(--text-muted);text-align:right;font-family:var(--font-mono);}
+.app-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px;}
+.app-item{padding:12px;border-radius:10px;border:1px solid var(--border-subtle);background:var(--bg-elevated);cursor:pointer;transition:all .2s;text-align:center;}
+.app-item:hover{border-color:var(--accent-emerald);background:rgba(52,211,153,0.05);}
+.app-item .app-icon{font-size:22px;margin-bottom:5px;}
+.app-item .app-name{font-size:11px;font-weight:600;color:var(--text-primary);}
+.app-item .app-meta{font-size:9px;color:var(--text-muted);margin-top:3px;}
+.compare-table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:10px;}
+.compare-table th,.compare-table td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--border-subtle);}
+.compare-table th{color:var(--text-muted);font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:.5px;}
+.compare-table td{color:var(--text-secondary);font-size:11px;}
+.compare-table tr:hover td{color:var(--text-primary);background:var(--bg-elevated);}
+.slider-container{margin:14px 0;}
+.slider-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:7px;}
+.slider-track{width:100%;height:6px;border-radius:3px;background:var(--border-subtle);position:relative;cursor:pointer;}
+.slider-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent-cyan),var(--accent-purple));transition:width .1s;}
+.slider-thumb{width:16px;height:16px;border-radius:50%;background:var(--text-primary);position:absolute;top:50%;transform:translate(-50%,-50%);box-shadow:0 2px 8px rgba(0,0,0,0.4);cursor:grab;transition:transform .1s;}
+.slider-thumb:active{transform:translate(-50%,-50%) scale(1.2);cursor:grabbing;}
+.mental-model{background:linear-gradient(135deg,rgba(34,211,238,0.05),rgba(167,139,250,0.05));border:1px solid rgba(34,211,238,0.2);border-radius:14px;padding:22px;margin-top:20px;}
+.mental-model h3{font-size:15px;margin-bottom:10px;color:var(--accent-cyan);}
+.mental-model p{font-size:13px;color:var(--text-secondary);line-height:1.7;}
+.flow-summary{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:14px;flex-wrap:wrap;font-size:11px;}
+.flow-summary .step{padding:5px 10px;border-radius:20px;background:var(--bg-elevated);border:1px solid var(--border-subtle);color:var(--text-secondary);}
+.flow-summary .arrow-sm{color:var(--text-muted);}
+.moe-viz{display:flex;flex-direction:column;gap:8px;padding:14px;}
+.moe-layer{display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg-deep);border-radius:8px;border:1px solid var(--border-subtle);}
+.moe-layer-label{width:60px;font-size:10px;color:var(--text-muted);font-family:var(--font-mono);}
+.moe-experts{flex:1;display:flex;gap:4px;}
+.moe-expert{flex:1;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;font-family:var(--font-mono);transition:all .3s ease;border:1px solid transparent;}
+.moe-expert.active{border-color:currentColor;box-shadow:0 0 12px currentColor;transform:scale(1.05);}
+.moe-expert.inactive{opacity:.25;}
+.moe-token{width:50px;text-align:center;font-size:11px;font-weight:600;color:var(--accent-cyan);font-family:var(--font-mono);}
+.spec-container{padding:14px;}
+.spec-timeline{display:flex;flex-direction:column;gap:6px;}
+.spec-step{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg-deep);border-radius:8px;border:1px solid var(--border-subtle);transition:all .3s;}
+.spec-step.active{border-color:var(--accent-pink);background:rgba(244,114,182,0.05);}
+.spec-step-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-family:var(--font-mono);background:var(--border-subtle);color:var(--text-muted);}
+.spec-step.active .spec-step-num{background:var(--accent-pink);color:var(--bg-deep);}
+.spec-step-desc{flex:1;font-size:12px;color:var(--text-secondary);}
+.spec-step-desc strong{color:var(--text-primary);}
+.spec-tokens{display:flex;gap:4px;}
+.spec-token{padding:4px 8px;border-radius:4px;font-size:11px;font-family:var(--font-mono);background:var(--bg-elevated);border:1px solid var(--border-subtle);transition:all .3s;}
+.spec-token.draft{color:var(--accent-pink);border-color:var(--accent-pink);}
+.spec-token.verified{color:var(--accent-emerald);border-color:var(--accent-emerald);background:rgba(52,211,153,0.1);}
+.spec-token.rejected{color:var(--accent-rose);border-color:var(--accent-rose);text-decoration:line-through;opacity:.5;}
+.agent-viz{padding:14px;}
+.agent-loop{display:flex;flex-direction:column;gap:8px;}
+.agent-step{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--bg-deep);border-radius:8px;border:1px solid var(--border-subtle);transition:all .4s ease;opacity:.4;}
+.agent-step.active{opacity:1;border-color:var(--accent-amber);background:rgba(251,191,36,0.05);}
+.agent-step-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;margin-top:2px;}
+.agent-step-content{flex:1;}
+.agent-step-title{font-size:12px;font-weight:600;color:var(--text-primary);margin-bottom:3px;}
+.agent-step-desc{font-size:11px;color:var(--text-muted);line-height:1.5;}
+.agent-arrow{text-align:center;color:var(--text-muted);font-size:14px;height:0;overflow:visible;position:relative;top:-4px;}
+.agent-tools{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.agent-tool{padding:4px 10px;border-radius:6px;font-size:10px;font-weight:500;background:var(--bg-elevated);border:1px solid var(--border-subtle);color:var(--text-secondary);transition:all .2s;}
+.agent-tool:hover{border-color:var(--accent-amber);color:var(--accent-amber);}
+.agent-tool.active{background:rgba(251,191,36,0.15);border-color:var(--accent-amber);color:var(--accent-amber);}
+.stats-bar{display:flex;gap:8px;margin-top:12px;}
+.stat-chip{flex:1;text-align:center;padding:10px;background:var(--bg-deep);border-radius:8px;border:1px solid var(--border-subtle);}
+.stat-value{font-size:16px;font-weight:700;font-family:var(--font-mono);}
+.stat-label{font-size:9px;color:var(--text-muted);margin-top:2px;text-transform:uppercase;letter-spacing:.5px;}
+.terminal{margin-top:12px;padding:12px;background:var(--bg-deep);border-radius:8px;font-size:11.5px;color:var(--text-secondary);font-family:var(--font-mono);line-height:1.6;min-height:50px;border:1px solid var(--border-subtle);}
+.terminal .ok{color:var(--accent-emerald);}
+.terminal .warn{color:var(--accent-amber);}
+.terminal .err{color:var(--accent-rose);}
+.terminal .info{color:var(--accent-cyan);}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{animation:fadeIn .4s ease forwards;}
+.hidden{display:none;}
+@media(max-width:480px){.app-grid{grid-template-columns:1fr;}.flow-diagram{gap:3px;}.flow-node{padding:7px 10px;font-size:10px;}.distill-container{flex-direction:column;}.distill-arrow{transform:rotate(90deg);margin:6px 0;}.hero-title{font-size:20px;}.moe-expert{height:30px;font-size:9px;}}
+::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:var(--bg-deep);}::-webkit-scrollbar-thumb{background:var(--border-active);border-radius:3px;}::-webkit-scrollbar-thumb:hover{background:var(--text-muted);}
 </style>
 </head>
 <body>
-<!-- ================= HERO ================= -->
-<header class="hero">
-  <canvas id="heroFlow" aria-hidden="true"></canvas>
-  <div class="wrap" style="position:relative">
-    <div class="eyebrow">AI Capability Flow · Frontier Model → Downstream Systems</div>
-    <h1>CASCADE<span class="dot">.</span></h1>
-    <p class="sub">One mental model for how AI capability flows from <em>frontier model</em> to <em>downstream systems</em> — released as open or closed <em>weights</em>, compressed by <em>distillation</em> and <em>quantization</em>, and delivered through the <em>application layer</em> on your device. Four stages. Four things to try and feel.</p>
-    <div class="whynow">
-      <div class="wk">Why now</div>
-      <p>Every organisation wanted AI in-house at once. Demand for accelerators outran supply, prices stayed high, and compute became the limit on what teams could actually ship. So the question inverted: instead of buying more hardware to fit the model, <em>shrink the model to fit the hardware you already own</em> — a server rack you've paid for, a laptop, a phone in someone's pocket.</p>
-      <p class="kick">That inversion is what this whole flow is about.</p>
-    </div>
-    <div class="compress-ex" aria-label="Worked example of the compression pipeline">
-      <div class="ce-title">One Example, End to End — Why Distillation Comes First</div>
-      <div class="ce-row">
-        <div class="ce-cell">
-          <div class="m"><b>70B</b> teacher · FP16</div>
-          <div class="gb">140 <small>GB</small></div>
-          <div class="ce-bar"><i style="width:100%"></i></div>
-          <div class="tag">CLOUD GPUs ONLY</div>
-        </div>
-        <div class="ce-arrow"><span class="op">Distill</span><span class="sym">→</span><span class="fx">9× fewer weights</span></div>
-        <div class="ce-cell">
-          <div class="m"><b>8B</b> student · FP16</div>
-          <div class="gb">16 <small>GB</small></div>
-          <div class="ce-bar"><i style="width:32%"></i></div>
-          <div class="tag">LAPTOP-SIZED</div>
-        </div>
-        <div class="ce-arrow"><span class="op">Quantize</span><span class="sym">→</span><span class="fx">4× fewer bits</span></div>
-        <div class="ce-cell">
-          <div class="m"><b>8B</b> student · INT4</div>
-          <div class="gb">4 <small>GB</small></div>
-          <div class="ce-bar"><i style="width:9%"></i></div>
-          <div class="tag">FITS A PHONE · TAB · LAPTOP</div>
-        </div>
-      </div>
-      <p class="ce-why">Two stages, two different redundancies: distillation removes <em>parameters the task doesn't need</em> (it's training — done once, at high precision), then quantization removes <em>precision the parameters don't need</em> (post-processing — cheap, even per-device). That's why the order is fixed: shrink the count, then shrink the bits.</p>
-    </div>
-    <nav class="flow-rail" aria-label="The four stages">
-      <a class="flow-cell" href="#s1">
-        <span class="k">STAGE 01</span>
-        <span class="t">Weights</span>
-        <span class="d">Open vs closed — who can touch the model at all</span>
-        <span class="arrow">→</span>
-      </a>
-      <a class="flow-cell" href="#s2">
-        <span class="k">STAGE 02</span>
-        <span class="t">Distillation</span>
-        <span class="d">A small student learns from a big teacher</span>
-        <span class="arrow">→</span>
-      </a>
-      <a class="flow-cell" href="#s3">
-        <span class="k">STAGE 03</span>
-        <span class="t">Quantization</span>
-        <span class="d">Fewer bits per weight, until it fits your device</span>
-        <span class="arrow">→</span>
-      </a>
-      <a class="flow-cell" href="#s4">
-        <span class="k">STAGE 04</span>
-        <span class="t">Application Layer</span>
-        <span class="d">Where the surviving capability meets real users</span>
-        <span class="arrow">→</span>
-      </a>
-    </nav>
-    <div class="scroll-hint">SCROLL — FRONTIER → DOWNSTREAM ↓</div>
-  </div>
-</header>
+<div class="install-banner" id="installBanner">
+<span class="install-text">📲 <strong>Install AI Capability Flow</strong> — works offline</span>
+<div><button class="install-btn" id="installBtn">Install</button><button class="install-close" onclick="hideInstallBanner()">×</button></div>
+</div>
+<div class="hero-section">
+<h1 class="hero-title">AI Capability Flow</h1>
+<p class="hero-subtitle">How frontier intelligence flows from research labs down to the devices in your pocket — and why it shapes every app you use.</p>
+<div class="flow-diagram">
+<div class="flow-node node-frontier" data-tab="weights" onclick="switchTab('weights')">🧠 Weights</div>
+<div class="flow-arrow">→</div>
+<div class="flow-node node-distill" data-tab="distillation" onclick="switchTab('distillation')">🔥 Distill</div>
+<div class="flow-arrow">→</div>
+<div class="flow-node node-quant" data-tab="quantization" onclick="switchTab('quantization')">⚡ Quant</div>
+<div class="flow-arrow">→</div>
+<div class="flow-node node-moe" data-tab="moe" onclick="switchTab('moe')">🧩 MoE</div>
+<div class="flow-arrow">→</div>
+<div class="flow-node node-spec" data-tab="speculative" onclick="switchTab('speculative')">🚀 SpecDec</div>
+<div class="flow-arrow">→</div>
+<div class="flow-node node-agent" data-tab="agents" onclick="switchTab('agents')">🤖 Agents</div>
+<div class="flow-arrow">→</div>
+<div class="flow-node node-device" data-tab="apps" onclick="switchTab('apps')">📱 Apps</div>
+</div>
+</div>
+<div class="tab-bar">
+<button class="tab-btn active" data-tab="weights" onclick="switchTab('weights')">Open/Closed</button>
+<button class="tab-btn" data-tab="distillation" onclick="switchTab('distillation')">Distillation</button>
+<button class="tab-btn" data-tab="quantization" onclick="switchTab('quantization')">Quantization</button>
+<button class="tab-btn" data-tab="moe" onclick="switchTab('moe')">MoE</button>
+<button class="tab-btn" data-tab="speculative" onclick="switchTab('speculative')">SpecDec</button>
+<button class="tab-btn" data-tab="agents" onclick="switchTab('agents')">Agents</button>
+<button class="tab-btn" data-tab="apps" onclick="switchTab('apps')">App Layer</button>
+</div>
+<div class="content-area">
 
-<!-- ================= STAGE 1 : WEIGHTS ================= -->
-<section class="stage" id="s1">
-  <div class="wrap">
-    <div class="stage-head"><span class="stage-num">STAGE 01 / 04</span><h2>Open vs Closed Weights</h2></div>
-    <p class="lede">A model <strong>is</strong> its weights — billions of learned numbers. Everything downstream depends on one question: <strong>do you get the file, or only an API?</strong> Open weights can be inspected, fine-tuned, distilled, quantized, and self-hosted. Closed weights stay in the lab's datacenter; you rent capability per token.</p>
-
-    <div class="panel">
-      <div class="panel-title">Demo · The Weight Vault <span class="free-tag">FREE · OFFLINE</span></div>
-      <div class="seg" role="group" aria-label="Weight access mode">
-        <button id="modeOpen" class="on">Open weights</button>
-        <button id="modeClosed">Closed weights</button>
-      </div>
-      <div class="vault-grid">
-        <div class="wmatrix" id="wmatrix">
-          <table aria-label="Sample of model weights"><tbody id="wbody"></tbody></table>
-          <div class="vault-veil"><div class="lock">🔒</div><p>WEIGHTS SEALED · SERVED BEHIND AN API</p></div>
-        </div>
-        <div>
-          <div class="acts" id="acts"></div>
-          <div class="vault-say" id="vaultSay">Pick an action to see what this access model lets you do.</div>
-        </div>
-      </div>
-      <p class="note"><b>Why it matters downstream:</b> stages 02 and 03 — distillation and quantization by <em>you</em> — are only fully unlocked when weights are open. With closed weights, the lab does the shrinking and you consume the result.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ================= STAGE 2 : DISTILLATION ================= -->
-<section class="stage" id="s2">
-  <div class="wrap">
-    <div class="stage-head"><span class="stage-num">STAGE 02 / 04</span><h2>Distillation</h2></div>
-    <p class="lede">A huge <strong>teacher</strong> model trains a small <strong>student</strong> — not with right/wrong answers, but with its full <strong>probability distribution</strong> over next tokens. The shape of that distribution ("Lyon is more likely than London here") carries <strong>dark knowledge</strong> a hard label throws away. Result: a model 10× smaller keeping most of the behaviour.</p>
-
-    <div class="panel">
-      <div class="panel-title">Demo · Distillation Studio <span class="free-tag">FREE · OFFLINE</span></div>
-      <div class="prompt-chip">prompt: "The capital of France is <span>___</span>"</div>
-      <div class="distill-grid">
-        <div class="model-card teacher">
-          <h4>TEACHER <span class="sz">70B params</span></h4>
-          <div class="bars" id="teacherBars"></div>
-        </div>
-        <div class="model-card student">
-          <h4>STUDENT <span class="sz">8B params</span></h4>
-          <div class="bars" id="studentBars"></div>
-        </div>
-      </div>
-      <div class="distill-ctl">
-        <button class="btn primary" id="btnSoft">Train step — distillation (soft targets)</button>
-        <button class="btn" id="btnHard">Train step — hard labels only</button>
-        <button class="btn" id="btnReset">Reset student</button>
-      </div>
-      <div class="match-meter">
-        <div class="row"><span>STUDENT ↔ TEACHER BEHAVIOUR MATCH</span><b id="matchPct">8%</b></div>
-        <div class="meter-track"><div class="meter-fill" id="matchFill"></div></div>
-      </div>
-      <div class="vault-say" id="distillSay" style="margin-top:14px">The student starts clueless — a flat guess. Try both training buttons and compare what each one teaches.</div>
-      <p class="note"><b>Feel the difference:</b> hard labels only push "Paris" up. Distillation also teaches the <em>ranking of wrong answers</em> — that Lyon beats London — which is geography knowledge, compressed.</p>
-      <p class="note"><b>Access matters:</b> the teacher needn't be a frontier model — just meaningfully stronger than the student. But <em>soft-target</em> distillation (what you just did) needs the teacher's full probability outputs, which means running it yourself: open weights, or being the lab that owns it. Behind a closed API you can only imitate sampled text — shallower, and usually fenced off by terms of service.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ================= STAGE 3 : QUANTIZATION ================= -->
-<section class="stage" id="s3">
-  <div class="wrap">
-    <div class="stage-head"><span class="stage-num">STAGE 03 / 04</span><h2>Quantization</h2></div>
-    <p class="lede">Distillation shrinks the <strong>number</strong> of weights; quantization shrinks the <strong>size of each one</strong>. Store weights in 8 or 4 bits instead of 32 and the same 8B model needs a quarter of the memory — with surprisingly small quality loss at INT8, and visible rounding at INT4. This is the step that finally makes a model fit in a phone.</p>
-
-    <div class="panel">
-      <div class="panel-title">Demo · Quantization Bench <span class="free-tag">FREE · OFFLINE</span></div>
-      <div class="q-top">
-        <div class="q-slider">
-          <input type="range" id="qRange" min="0" max="3" step="1" value="0" aria-label="Precision level">
-          <div class="q-stops" id="qStops">
-            <span class="on">FP32</span><span>FP16</span><span>INT8</span><span>INT4</span>
-          </div>
-        </div>
-        <div class="q-badge" id="qBadge">FP32 · 32 bits / weight</div>
-      </div>
-      <div class="q-grid">
-        <div class="q-canvas-box">
-          <canvas id="qCanvas" width="520" height="240" style="width:100%;height:auto"></canvas>
-          <div class="cap">A slice of learned weights — gold: original values · dots: what actually gets stored</div>
-        </div>
-        <div class="q-stats">
-          <div class="q-stat">
-            <div class="k">8B model in memory</div>
-            <div class="v" id="qMem">32 <small>GB</small></div>
-          </div>
-          <div class="q-stat">
-            <div class="k">Avg rounding error per weight</div>
-            <div class="v" id="qErr">~0 <small>(reference)</small></div>
-          </div>
-          <div class="q-stat">
-            <div class="k">Where it fits</div>
-            <div class="devices">
-              <div class="dev" data-cap="80"><span class="led"></span>Cloud GPU <span class="cap-gb">80 GB</span></div>
-              <div class="dev" data-cap="24"><span class="led"></span>Workstation GPU <span class="cap-gb">24 GB</span></div>
-              <div class="dev" data-cap="16"><span class="led"></span>Laptop <span class="cap-gb">16 GB</span></div>
-              <div class="dev" data-cap="6"><span class="led"></span>Phone <span class="cap-gb">6 GB</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <p class="note"><b>Feel it:</b> drag to INT8 — the dots barely leave the curve, yet memory falls 4×. Drag to INT4 and watch the staircase appear. That staircase <em>is</em> the quality trade you're making for a phone-sized model.</p>
-      <p class="note"><b>Required, or just storage?</b> Neither exactly. On a big cloud GPU it's an <em>optimization</em> — but not only of storage: generating each token streams all weights through the chip, so 4× smaller weights ≈ 4× less data moved ≈ faster, cheaper serving. On constrained hardware it's a <em>prerequisite</em> — no quantization, no model on the phone. And it's applied <em>after</em> training, which is why it sits here, downstream, in the flow.</p>
-
-      <div class="panel-title" style="margin-top:26px">The precision ladder</div>
-      <div class="ladder">
-        <div class="lrow"><span class="lb">FP32</span><span class="lx">32-bit</span><span class="ld">Full precision. The reference point — and huge files.</span></div>
-        <div class="lrow"><span class="lb">FP16 / BF16</span><span class="lx">16-bit · 2×</span><span class="ld">Half precision, near-identical quality. The normal way models are trained and served today.</span></div>
-        <div class="lrow"><span class="lb">INT8</span><span class="lx">8-bit · 4×</span><span class="ld">Slight quality drop, rarely noticeable. The safe default for squeezing onto smaller hardware.</span></div>
-        <div class="lrow"><span class="lb">INT4</span><span class="lx">4-bit · 8×</span><span class="ld">Real quality loss, but often acceptable — and the step that makes phone-sized models possible.</span></div>
-        <div class="lrow exp"><span class="lb">~1-bit</span><span class="lx">research</span><span class="ld">Extreme compression using ternary weights. Promising, still experimental — not something to ship on today.</span></div>
-      </div>
-      <p class="note"><b>Read the multipliers against FP32.</b> Elsewhere on this page the worked example starts from FP16, so INT4 shows as 4× there rather than 8× — same compression, different starting point. Always ask "smaller than <em>what</em>?"</p>
-    </div>
-  </div>
-</section>
-
-<!-- ================= IN PRACTICE ================= -->
-<section class="stage" id="sp">
-  <div class="wrap">
-    <div class="stage-head"><span class="stage-num">STAGES 02–03</span><h2>In Practice</h2></div>
-    <p class="lede">You've felt the concepts. Here's what the artifacts actually look like on disk — and what it really takes to shrink a model yourself. <strong>One of these two jobs is a research project. The other is a single command.</strong></p>
-
-    <div class="panel">
-      <div class="panel-title">Reference · From Download to Device <span class="free-tag">READ-ONLY</span></div>
-      <div class="tabs" role="tablist">
-        <button class="on" data-tab="files">What you download</button>
-        <button data-tab="distill">02 · Distill it</button>
-        <button data-tab="quant">03 · Quantize it</button>
-      </div>
-
-      <div class="tabpane on" data-pane="files">
-        <div class="tree"><pre><b>model-name/</b>
-├── <u>config.json</u>                        <i>architecture blueprint</i>
-├── <u>model-00001-of-00004.safetensors</u>   <i>the weights, sharded</i>
-├── <u>model-00002-of-00004.safetensors</u>
-├── <u>model-00003-of-00004.safetensors</u>
-├── <u>model-00004-of-00004.safetensors</u>
-├── <u>model.safetensors.index.json</u>       <i>tensor → shard map</i>
-├── <u>tokenizer.json</u>                     <i>text ⇄ token IDs</i>
-├── <u>tokenizer_config.json</u>              <i>chat template lives here</i>
-├── <u>generation_config.json</u>             <i>default sampling params</i>
-├── <u>README.md</u>                          <i>the model card</i>
-└── <u>LICENSE</u></pre></div>
-        <p class="note"><b>Inside a shard:</b> a header listing tensor names, shapes and dtypes, then raw numbers — e.g. <em>model.layers.0.self_attn.q_proj.weight</em>, shape [4096, 4096], bf16. Nothing executable; the format is designed to be safe to load.</p>
-        <p class="note"><b>What you do <em>not</em> get:</b> the training data, the training code, or the optimizer states. You can run and fine-tune the model — you cannot reproduce it. That gap is exactly why the term is <em>open weights</em>, not <em>open source</em>.</p>
-      </div>
-
-      <div class="tabpane" data-pane="distill">
-        <div class="cost-row">
-          <div class="cost"><div class="ck">Effort</div><div class="cv">Days to weeks</div></div>
-          <div class="cost"><div class="ck">Hardware</div><div class="cv">Multi-GPU</div></div>
-          <div class="cost"><div class="ck">Data needed</div><div class="cv">Your domain corpus</div></div>
-        </div>
-        <div class="step"><span class="n">1</span><span class="sx"><b>Pick a student base</b>You start from an existing small model, not from scratch.</span></div>
-        <div class="step"><span class="n">2</span><span class="sx"><b>Run your domain prompts through the teacher</b>Capture its output <em>distributions</em> — not just the final text. This is the soft-target step, and it needs the teacher's logits.</span></div>
-        <div class="step"><span class="n">3</span><span class="sx"><b>Train the student against those distributions</b>KL-divergence against the teacher's probabilities.</span></div>
-        <div class="step"><span class="n">4</span><span class="sx"><b>Evaluate on a domain eval suite</b>The step people skip and regret. Without it you can't tell whether the student learned the judgment or just the phrasing.</span></div>
-        <p class="note"><b>The reality check:</b> most teams never distill. They take an existing small open model and quantize it — because that's one command, while distillation is a research project needing proprietary data. Which is precisely why quantization is the commodity move anyone can make, and distillation on <em>your own</em> data is the part that stays defensible.</p>
-      </div>
-
-      <div class="tabpane" data-pane="quant">
-        <div class="cost-row">
-          <div class="cost"><div class="ck">Effort</div><div class="cv">Hours</div></div>
-          <div class="cost"><div class="ck">Hardware</div><div class="cv">One GPU — or CPU</div></div>
-          <div class="cost"><div class="ck">Data needed</div><div class="cv">None to a little</div></div>
-        </div>
-        <div class="cmd"><pre><i># 1 · convert to GGUF, still full precision</i>
-python convert_hf_to_gguf.py ./model-name --outtype f16
-
-<i># 2 · compress to 4-bit</i>
-llama-quantize model-f16.gguf model-Q4_K_M.gguf Q4_K_M</pre></div>
-        <p class="note"><b>That's the whole job.</b> One file out, runs on CPU, laptop or phone. <em>Q4_K_M</em> is the usual sweet spot; <em>Q8_0</em> when you want near-lossless. For GPU serving, AWQ or GPTQ instead — both calibrate against a small sample of real text to choose smarter rounding points rather than rounding blindly.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ================= WORKED BUILD ================= -->
-<section class="stage" id="sw">
-  <div class="wrap">
-    <div class="stage-head"><span class="stage-num">WORKED BUILD</span><h2>Shrinking One For Yourself</h2></div>
-    <p class="lede">Abstract until you do it. So here's stages 02–03 run end to end for <strong>one narrow domain — a product management assistant</strong> — from a datacenter-sized teacher to a file on a laptop or phone. Step through it and watch the size fall as the scope narrows.</p>
-
-    <div class="panel">
-      <div class="panel-title">Demo · Build a Domain SLM <span class="free-tag">FREE · OFFLINE</span></div>
-      <div class="wb-top">
-        <div class="wb-stat"><div class="k">Model size</div><div class="v" id="wbSize">140 <small>GB</small></div></div>
-        <div class="wb-stat"><div class="k">What it can do</div><div class="v" id="wbScope" style="font-size:13px">Everything</div>
-          <div class="wb-scope"><div class="bar"><i id="wbScopeBar" style="width:100%"></i></div></div>
-        </div>
-        <div class="wb-stat"><div class="k">Runs on</div><div class="v" id="wbRuns" style="font-size:13px">Datacenter</div></div>
-      </div>
-      <div class="wb-dots" id="wbDots"></div>
-      <div class="wb-card" id="wbCard"></div>
-      <div class="wb-nav">
-        <button class="btn" id="wbPrev">← Back</button>
-        <button class="btn primary" id="wbNext">Next step →</button>
-        <span class="pos" id="wbPos">STEP 1 OF 7</span>
-      </div>
-      <p class="note"><b>Numbers are illustrative</b> — real ratios depend on how narrow your domain is and how much quality you'll trade. The <em>shape</em> of the process is what matters, and it's the same for any domain: legal drafting, crop advisory, claims triage, tax queries.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ================= STAGE 4 : APPLICATION LAYER ================= -->
-<section class="stage" id="s4">
-  <div class="wrap">
-    <div class="stage-head"><span class="stage-num">STAGE 04 / 04</span><h2>The Application Layer</h2></div>
-    <p class="lede">Builders don't pick "the best model" — they pick a <strong>point on the flow</strong>. Frontier closed API for maximum capability; open weights for control; distilled for cost; quantized for the edge. Your product's constraints — privacy, connectivity, scale, budget — choose the path for you.</p>
-
-    <div class="panel">
-      <div class="panel-title">Demo · Deployment Fitter <span class="free-tag">FREE · OFFLINE</span></div>
-      <div class="cases" id="cases">
-        <button class="case-btn" data-case="farmer"><span class="ic">🌾</span><b>Farm advisor</b>Rural users, patchy network, must work offline</button>
-        <button class="case-btn" data-case="clinic"><span class="ic">🏥</span><b>Clinic notes</b>Patient data can never leave the premises</button>
-        <button class="case-btn" data-case="consumer"><span class="ic">💬</span><b>Consumer chat</b>Millions of users, cost per token rules</button>
-        <button class="case-btn" data-case="agent"><span class="ic">🧠</span><b>Frontier agent</b>Hardest reasoning wins; latency is fine</button>
-      </div>
-      <div class="path-map" id="pathMap">
-        <div class="path-node" data-node="frontier"><div class="nk">Frontier Lab</div><div class="nt">Closed API</div></div>
-        <div class="path-node" data-node="open"><div class="nk">Open Release</div><div class="nt">Full weights</div></div>
-        <div class="path-node" data-node="distill"><div class="nk">Distilled</div><div class="nt">Small student</div></div>
-        <div class="path-node" data-node="quant"><div class="nk">Quantized</div><div class="nt">On-device</div></div>
-      </div>
-      <div class="verdict" id="verdict">Select a use case above — the pipeline lights up the path that fits, and explains which of the four concepts made it possible.</div>
-
-      <div class="panel-title" style="margin-top:28px">Recap · How each stage shapes what's possible</div>
-      <div class="ptable">
-        <div class="pt-head"><span>Stage</span><span>What changes</span><span>What it unlocks</span></div>
-        <div class="pt-row">
-          <span class="pt-s">Open weights</span>
-          <span class="pt-c">Anyone can download, inspect and modify the model</span>
-          <span class="pt-i">Self-hosted apps, fine-tuned specialists, air-gapped deployments, no vendor lock-in</span>
-        </div>
-        <div class="pt-row">
-          <span class="pt-s">Distillation</span>
-          <span class="pt-c">Large → small, with the behaviour that matters preserved</span>
-          <span class="pt-i">Affordable inference, edge deployment, real-time response, domain specialists that beat generalists in their lane</span>
-        </div>
-        <div class="pt-row">
-          <span class="pt-s">Quantization</span>
-          <span class="pt-c">32-bit → 4-bit precision per weight</span>
-          <span class="pt-i">Phone and IoT apps, up to 8× less memory, faster tokens, cheaper serving</span>
-        </div>
-        <div class="pt-row sum">
-          <span class="pt-s">Application layer</span>
-          <span class="pt-c">All three combined, chosen per constraint</span>
-          <span class="pt-i">New categories: private on-premise AI, offline agents, assistants with no per-token cost</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ================= COROLLARY : THE MOAT ================= -->
-<section class="stage" id="s5">
-  <div class="wrap">
-    <div class="stage-head"><span class="stage-num">COROLLARY</span><h2>When Weights Become a Commodity</h2></div>
-    <p class="lede">The flow has a sting in its tail. Strong open base models are increasingly released <strong>free, as commodities</strong> — the business sits in the platforms and tooling around them, not in the weights themselves. Which means <strong>downloading weights is not a moat</strong>: anyone can grab the same file this afternoon. Owning a model became cheap at exactly the moment it stopped being the valuable part.</p>
-
-    <div class="panel">
-      <div class="panel-title">Demo · Moat Builder <span class="free-tag">FREE · OFFLINE</span></div>
-      <p style="font-size:13.5px;color:var(--dim);margin-bottom:14px">Toggle what your team actually owns. Watch what happens to your defensibility.</p>
-      <div class="moat-opts" id="moatOpts">
-        <button class="moat-opt" data-moat="weights"><span class="ic">📥</span><b>Downloaded weights</b>A strong open base model, permissively licensed<span class="own">NOT OWNED</span></button>
-        <button class="moat-opt" data-moat="data"><span class="ic">🔁</span><b>Expert data loop</b>Your specialists' judgment, captured continuously as labeled training data no one can scrape<span class="own">NOT OWNED</span></button>
-        <button class="moat-opt" data-moat="evals"><span class="ic">📐</span><b>Domain eval suite</b>Tests that prove the model actually learned your experts' judgment<span class="own">NOT OWNED</span></button>
-      </div>
-      <div class="match-meter" style="margin-top:18px">
-        <div class="row"><span>MOAT STRENGTH</span><b id="moatPct">0%</b></div>
-        <div class="meter-track"><div class="meter-fill" id="moatFill" style="width:0%"></div></div>
-      </div>
-      <div class="vault-say" id="moatSay" style="margin-top:14px">You own nothing yet. Start by grabbing the free weights — like everyone else.</div>
-      <p class="note"><b>The pattern in practice:</b> a small model fine-tuned on years of proprietary expert judgment can beat a frontier generalist <em>inside that narrow domain</em>, at a fraction of the serving cost. The base weights contributed the least scarce part.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ================= SYNTHESIS ================= -->
-<div class="wrap">
-  <div class="synth">
-    <div class="eyebrow">The One Mental Model</div>
-    <p class="big">Frontier labs <span>create</span> capability. Open weights <span>release</span> it. Distillation <span>shrinks</span> it. Quantization <span>fits</span> it. The application layer is where whatever <span>survives the flow</span> finally meets a human. And when the weights become free, the moat moves to <span>your data</span>.</p>
-  </div>
+<!-- TAB 1: Weights -->
+<div id="tab-weights" class="tab-content fade-in">
+<h2 class="section-title">Open vs Closed Weights <span class="section-badge badge-concept">Concept</span></h2>
+<p class="section-desc">Weights are the learned parameters of a neural network — billions of numbers that encode "knowledge." Whether they're <strong>open</strong> (downloadable) or <strong>closed</strong> (API-only) determines who can build on top of them.</p>
+<div class="card">
+<div class="card-title">🔓 Open Weights</div>
+<div class="card-body">Models like <strong>Llama, Mistral, Qwen</strong> release their weight files. Anyone can download, modify, fine-tune, or run them locally. This democratizes access but also means the model can be studied, red-teamed, or distilled by competitors.</div>
+</div>
+<div class="card">
+<div class="card-title">🔒 Closed Weights</div>
+<div class="card-body">Models like <strong>GPT-4, Claude, Gemini</strong> keep weights secret. You interact via API only. The provider controls inference, pricing, and safety filters. The model itself is a black box — you can't inspect or modify it.</div>
+</div>
+<div class="demo-box">
+<div class="card-title">🎮 Demo: Peek Inside the Weights</div>
+<p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Each colored square represents one weight value. Hover to inspect. Open models let you see and touch every single one.</p>
+<div class="demo-controls">
+<button class="demo-btn primary" onclick="regenerateWeights()">🎲 Randomize</button>
+<button class="demo-btn" onclick="toggleOpenClosed()">Toggle Open/Closed</button>
+</div>
+<div class="viz-canvas" id="weightViz">
+<div class="weight-grid" id="weightGrid"></div>
+<div id="weightOverlay" style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(0,0,0,0.4) 10px,rgba(0,0,0,0.4) 20px);display:none;align-items:center;justify-content:center;">
+<span style="background:var(--bg-card);padding:12px 20px;border-radius:8px;font-size:14px;font-weight:600;color:var(--accent-rose);border:1px solid var(--accent-rose);">🔒 CLOSED — Weights Hidden</span>
+</div>
+</div>
+<div style="display:flex;justify-content:space-between;margin-top:10px;font-size:11px;color:var(--text-muted);font-family:var(--font-mono);">
+<span id="weightCount">400 weights shown</span>
+<span id="weightStatus">🔓 Open — Full Access</span>
+</div>
+</div>
+<div class="card" style="margin-top:14px;">
+<div class="card-title">💡 Why It Matters</div>
+<div class="card-body"><strong>Open weights</strong> enable the entire downstream ecosystem: local LLMs, fine-tuned specialists, on-device inference, and distillation into smaller models. <strong>Closed weights</strong> fund frontier research through API revenue but create dependency on the provider's infrastructure.</div>
+</div>
 </div>
 
-<footer>
-  <div class="sig">CASCADE · AI Capability Flow — Frontier Model → Downstream Systems</div>
-  <div style="margin-top:8px">Designed &amp; Architected by Krishnamurthy Kandregula · Made by Claude</div>
-  <div style="margin-top:6px">All demos are deterministic simulations for teaching — free, offline, no API key.</div>
-</footer>
+<!-- TAB 2: Distillation -->
+<div id="tab-distillation" class="tab-content hidden">
+<h2 class="section-title">Knowledge Distillation <span class="section-badge badge-concept">Concept</span></h2>
+<p class="section-desc">A <strong>teacher model</strong> (large, capable, expensive) trains a <strong>student model</strong> (small, fast, cheap) by sharing not just final answers, but the full probability distribution — the "soft targets" that encode nuanced reasoning.</p>
+<div class="card">
+<div class="card-title">🎓 How It Works</div>
+<div class="card-body">Instead of training on raw data labels, the student learns to mimic the teacher's output probabilities. If the teacher says "cat: 0.7, dog: 0.2, fox: 0.1", the student learns that subtle distinction — capturing far more information than a hard label of just "cat."</div>
+</div>
+<div class="demo-box">
+<div class="card-title">🎮 Demo: Teacher → Student</div>
+<p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Adjust temperature and watch knowledge compress from teacher to student.</p>
+<div class="slider-container">
+<div class="slider-label"><span>Distillation Temperature</span><span id="tempValue">T = 2.0</span></div>
+<div class="slider-track" id="tempSlider" onclick="handleSliderClick(event,'temp')">
+<div class="slider-fill" id="tempFill" style="width:50%"></div>
+<div class="slider-thumb" id="tempThumb" style="left:50%"></div>
+</div>
+</div>
+<div class="distill-container">
+<div class="model-box">
+<h4 style="color:var(--accent-cyan)">🧠 Teacher</h4>
+<div class="model-size-bar"><div class="model-size-fill" id="teacherBar" style="width:100%;background:var(--accent-cyan)"></div></div>
+<div class="model-params" id="teacherParams">70B params</div>
+<div style="margin-top:8px;font-size:11px;color:var(--text-muted);">
+<div>Output: [0.65, 0.25, 0.08, 0.02]</div>
+<div style="margin-top:3px;">Rich, nuanced probs</div>
+</div>
+</div>
+<div class="distill-arrow"><span>DISTILL</span><span style="font-size:18px;">↓</span><span style="font-size:9px;color:var(--text-muted)">KL Loss</span></div>
+<div class="model-box">
+<h4 style="color:var(--accent-purple)">📚 Student</h4>
+<div class="model-size-bar"><div class="model-size-fill" id="studentBar" style="width:14%;background:var(--accent-purple)"></div></div>
+<div class="model-params" id="studentParams">7B params</div>
+<div style="margin-top:8px;font-size:11px;color:var(--text-muted);">
+<div id="studentOutput">Output: [0.62, 0.28, 0.07, 0.03]</div>
+<div style="margin-top:3px;" id="studentQuality">Quality: 94% match</div>
+</div>
+</div>
+</div>
+<div class="demo-controls" style="margin-top:14px;">
+<button class="demo-btn primary" onclick="runDistillation()">🔥 Run Distillation</button>
+<button class="demo-btn" onclick="resetDistill()">↺ Reset</button>
+</div>
+<div class="terminal" id="distillLog">> Ready to distill knowledge...</div>
+</div>
+<div class="card" style="margin-top:14px;">
+<div class="card-title">💡 Real-World Impact</div>
+<div class="card-body"><strong>DeepSeek-R1</strong> was distilled into variants (1.5B to 70B) rivaling GPT-4o on math and coding. <strong>Llama 3.1</strong> was distilled into tiny on-device models. Without distillation, capable AI would be trapped in data centers.</div>
+</div>
+</div>
+
+<!-- TAB 3: Quantization -->
+<div id="tab-quantization" class="tab-content hidden">
+<h2 class="section-title">Quantization <span class="section-badge badge-concept">Concept</span></h2>
+<p class="section-desc">Quantization reduces the <strong>precision</strong> of weight values. A 32-bit float becomes 16-bit, 8-bit, or even 4-bit. Fewer bits = smaller file, faster inference, less memory — but potentially lower accuracy.</p>
+<div class="card">
+<div class="card-title">📊 The Precision Trade-off</div>
+<div class="card-body">
+<strong>FP32</strong> (32-bit): Full precision, huge files.<br>
+<strong>FP16/BF16</strong> (16-bit): Half precision, nearly identical quality, 2x smaller.<br>
+<strong>INT8</strong> (8-bit): 4x smaller, slight quality drop.<br>
+<strong>INT4</strong> (4-bit): 8x smaller, often acceptable quality loss.<br>
+<strong>1-bit</strong> (BitNet): Extreme compression, emerging research.
+</div>
+</div>
+<div class="demo-box">
+<div class="card-title">🎮 Demo: Bit Precision Visualizer</div>
+<p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Each block = one bit. See how the same weight is stored at different precision levels.</p>
+<div class="slider-container">
+<div class="slider-label"><span>Select Precision</span><span id="precisionLabel">FP32 (32-bit)</span></div>
+<div class="slider-track" id="precSlider" onclick="handleSliderClick(event,'prec')">
+<div class="slider-fill" id="precFill" style="width:100%"></div>
+<div class="slider-thumb" id="precThumb" style="left:100%"></div>
+</div>
+</div>
+<div class="bit-visualizer" id="bitVisualizer"></div>
+<div class="stats-bar">
+<div class="stat-chip"><div class="stat-value" id="sizeMetric" style="color:var(--accent-cyan)">100%</div><div class="stat-label">Relative Size</div></div>
+<div class="stat-chip"><div class="stat-value" id="speedMetric" style="color:var(--accent-emerald)">1.0x</div><div class="stat-label">Inference Speed</div></div>
+<div class="stat-chip"><div class="stat-value" id="qualityMetric" style="color:var(--accent-amber)">100%</div><div class="stat-label">Quality</div></div>
+</div>
+</div>
+<div class="card" style="margin-top:14px;">
+<div class="card-title">💡 Why Quantization Shapes the App Layer</div>
+<div class="card-body">A 70B model at FP32 needs <strong>280GB</strong> VRAM — impossible for consumer hardware. At INT4, it fits in <strong>35GB</strong>. At INT8, a 7B model fits on a <strong>phone</strong>. Quantization is the bridge that makes on-device AI feasible.</div>
+</div>
+</div>
+
+<!-- TAB 4: MoE -->
+<div id="tab-moe" class="tab-content hidden">
+<h2 class="section-title">Mixture of Experts <span class="section-badge badge-new">New</span></h2>
+<p class="section-desc">MoE is a <strong>conditional computation</strong> architecture where only a subset of the model's parameters activate per token. A <strong>router</strong> learns which "expert" subnetworks to invoke for each input, enabling massive parameter counts without proportional compute cost.</p>
+<div class="card">
+<div class="card-title">🧩 The Core Idea</div>
+<div class="card-body">Traditional transformers use the same parameters for every token. MoE replaces dense feed-forward layers with <strong>sparse expert layers</strong> — multiple specialized networks where only top-k experts fire per token. DeepSeek-V3 (671B total, 37B active) and Mixtral 8x7B (8 experts, 2 active) are leading examples.</div>
+</div>
+<div class="demo-box">
+<div class="card-title">🎮 Demo: Router + Expert Selection</div>
+<p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Watch how different tokens route to different experts across layers. Only activated experts consume compute.</p>
+<div class="demo-controls">
+<button class="demo-btn primary" onclick="runMoE()">🎲 Route Next Token</button>
+<button class="demo-btn" onclick="resetMoE()">↺ Reset</button>
+</div>
+<div class="moe-viz" id="moeViz"></div>
+<div class="stats-bar" style="margin-top:10px;">
+<div class="stat-chip"><div class="stat-value" id="moeTotal" style="color:var(--accent-blue)">8</div><div class="stat-label">Total Experts</div></div>
+<div class="stat-chip"><div class="stat-value" id="moeActive" style="color:var(--accent-emerald)">2</div><div class="stat-label">Active / Token</div></div>
+<div class="stat-chip"><div class="stat-value" id="moeSparsity" style="color:var(--accent-amber)">25%</div><div class="stat-label">Active Params</div></div>
+</div>
+</div>
+<div class="card" style="margin-top:14px;">
+<div class="card-title">💡 Why MoE Changes the Economics</div>
+<div class="card-body">MoE lets models scale to <strong>trillions of parameters</strong> while keeping inference costs comparable to much smaller dense models. The catch: all experts must reside in memory, so VRAM requirements don't shrink — but <strong>compute per token does</strong>. This is why GPT-4, DeepSeek-V3, and Kimi K2 all use MoE.</div>
+</div>
+</div>
+
+<!-- TAB 5: Speculative Decoding -->
+<div id="tab-speculative" class="tab-content hidden">
+<h2 class="section-title">Speculative Decoding <span class="section-badge badge-new">New</span></h2>
+<p class="section-desc"><strong>Draft-then-verify</strong>: a small, fast "draft" model predicts several future tokens ahead. The large target model verifies them all in <strong>one parallel forward pass</strong>, accepting the matching prefix. This breaks the sequential token-by-token bottleneck, yielding <strong>2-4x speedups</strong> with zero quality loss.</p>
+<div class="card">
+<div class="card-title">🚀 How It Works</div>
+<div class="card-body">Autoregressive generation is inherently sequential — each token needs a full forward pass. Speculative decoding pairs a lightweight draft model with the target model. The draft model rapidly proposes 3-5 tokens; the target verifies them in parallel. Accepted tokens are emitted; the first mismatch is corrected and the cycle repeats.</div>
+</div>
+<div class="demo-box">
+<div class="card-title">🎮 Demo: Draft → Verify → Accept</div>
+<p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Watch the draft model propose tokens, then see which ones the target model accepts or rejects.</p>
+<div class="demo-controls">
+<button class="demo-btn primary" onclick="runSpeculative()">▶️ Generate Tokens</button>
+<button class="demo-btn" onclick="resetSpeculative()">↺ Reset</button>
+</div>
+<div class="spec-container">
+<div class="spec-timeline" id="specTimeline">
+<div class="spec-step active" id="specStep1">
+<div class="spec-step-num">1</div>
+<div class="spec-step-desc"><strong>Draft</strong> — Small model proposes 4 tokens quickly</div>
+<div class="spec-tokens" id="draftTokens"></div>
+</div>
+<div class="spec-step" id="specStep2">
+<div class="spec-step-num">2</div>
+<div class="spec-step-desc"><strong>Verify</strong> — Target model checks all in parallel</div>
+<div class="spec-tokens" id="verifyTokens"></div>
+</div>
+<div class="spec-step" id="specStep3">
+<div class="spec-step-num">3</div>
+<div class="spec-step-desc"><strong>Accept</strong> — Matching prefix emitted, rest regenerated</div>
+<div class="spec-tokens" id="acceptTokens"></div>
+</div>
+</div>
+</div>
+<div class="stats-bar" style="margin-top:10px;">
+<div class="stat-chip"><div class="stat-value" id="specSpeedup" style="color:var(--accent-pink)">1.0x</div><div class="stat-label">Speedup</div></div>
+<div class="stat-chip"><div class="stat-value" id="specAccepted" style="color:var(--accent-emerald)">0</div><div class="stat-label">Accepted</div></div>
+<div class="stat-chip"><div class="stat-value" id="specRejected" style="color:var(--accent-rose)">0</div><div class="stat-label">Rejected</div></div>
+</div>
+</div>
+<div class="card" style="margin-top:14px;">
+<div class="card-title">💡 The Zero-Quality-Loss Guarantee</div>
+<div class="card-body">Unlike quantization or pruning, speculative decoding is <strong>mathematically equivalent</strong> to running the target model alone. The draft model merely accelerates — it never changes the output distribution. This makes it the safest optimization technique for production deployments where quality cannot be compromised.</div>
+</div>
+</div>
+
+<!-- TAB 6: Agents -->
+<div id="tab-agents" class="tab-content hidden">
+<h2 class="section-title">Agent Architecture <span class="section-badge badge-new">New</span></h2>
+<p class="section-desc">An AI agent is not "an LLM in a loop." It's a <strong>complete production architecture</strong> with six layers: reasoning engine, memory, tools, planner, runtime, and observability. The agent perceives, reasons, acts, and observes in a continuous loop until the goal is achieved.</p>
+<div class="card">
+<div class="card-title">🤖 The Six Layers</div>
+<div class="card-body">
+<strong>1. LLM Core</strong> — The reasoning brain (Claude, GPT, Llama).<br>
+<strong>2. Memory</strong> — Short-term (context), episodic (vector DB), procedural (learned heuristics).<br>
+<strong>3. Tools</strong> — External actions via MCP, APIs, code execution, browser automation.<br>
+<strong>4. Planner</strong> — ReAct, Plan-and-Execute, Tree-of-Thoughts, Reflexion.<br>
+<strong>5. Runtime</strong> — LangGraph, CrewAI, OpenAI Agents SDK — manages state, retries, handoffs.<br>
+<strong>6. Observability</strong> — Langfuse, LangSmith — every step traced and evaluable.
+</div>
+</div>
+<div class="demo-box">
+<div class="card-title">🎮 Demo: Agent Loop Simulation</div>
+<p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Watch a ReAct agent loop through perception → reasoning → action → observation to complete a task.</p>
+<div class="demo-controls">
+<button class="demo-btn primary" onclick="runAgent()">▶️ Run Agent Loop</button>
+<button class="demo-btn" onclick="resetAgent()">↺ Reset</button>
+</div>
+<div class="agent-viz">
+<div class="agent-loop" id="agentLoop">
+<div class="agent-step" id="agentStep1"><div class="agent-step-icon" style="background:rgba(34,211,238,0.15);">👁️</div><div class="agent-step-content"><div class="agent-step-title">Perceive</div><div class="agent-step-desc">Receive user goal and current environment state</div></div></div>
+<div class="agent-arrow">↓</div>
+<div class="agent-step" id="agentStep2"><div class="agent-step-icon" style="background:rgba(167,139,250,0.15);">🧠</div><div class="agent-step-content"><div class="agent-step-title">Reason</div><div class="agent-step-desc">LLM generates a thought: what action should I take next?</div></div></div>
+<div class="agent-arrow">↓</div>
+<div class="agent-step" id="agentStep3"><div class="agent-step-icon" style="background:rgba(251,146,60,0.15);">🔧</div><div class="agent-step-content"><div class="agent-step-title">Act</div><div class="agent-step-desc">Execute a tool call (search, calculator, API, code)</div></div></div>
+<div class="agent-arrow">↓</div>
+<div class="agent-step" id="agentStep4"><div class="agent-step-icon" style="background:rgba(52,211,153,0.15);">👁️</div><div class="agent-step-content"><div class="agent-step-title">Observe</div><div class="agent-step-desc">Read tool output, update memory, check if goal achieved</div></div></div>
+</div>
+<div class="agent-tools" id="agentTools">
+<div class="agent-tool">🔍 Web Search</div><div class="agent-tool">🧮 Calculator</div><div class="agent-tool">📅 Calendar</div>
+<div class="agent-tool">💻 Code Exec</div><div class="agent-tool">📧 Email</div><div class="agent-tool">🗄️ Database</div>
+</div>
+</div>
+<div class="terminal" id="agentLog">> Agent initialized. Waiting for task...</div>
+</div>
+<div class="card" style="margin-top:14px;">
+<div class="card-title">💡 From Chatbot to Agent</div>
+<div class="card-body">A <strong>chatbot</strong> reacts to questions. An <strong>agent</strong> realizes goals. "What's the weather?" → chatbot. "Find me a cheap hotel with a pool, check reviews, compare 3 options, and book" → agent. The difference is <strong>autonomous planning and tool use</strong> across multiple reasoning steps.</div>
+</div>
+</div>
+
+<!-- TAB 7: App Layer -->
+<div id="tab-apps" class="tab-content hidden">
+<h2 class="section-title">The Application Layer <span class="section-badge badge-concept">Concept</span></h2>
+<p class="section-desc">Everything upstream — weights, distillation, quantization, MoE, speculative decoding, agents — converges here. These decisions determine what apps can exist, where they run, who can build them, and what they cost.</p>
+<div class="card">
+<div class="card-title">🌍 The Capability Cascade</div>
+<div class="card-body"><strong>Frontier Lab</strong> trains massive model → <strong>Open weights</strong> democratize access → <strong>Distillation</strong> creates efficient variants → <strong>MoE</strong> scales parameters without compute → <strong>Quantization</strong> shrinks for devices → <strong>SpecDec</strong> speeds inference → <strong>Agents</strong> add reasoning → <strong>Developers</strong> build previously impossible apps.</div>
+</div>
+<div class="demo-box">
+<div class="card-title">🎮 Demo: App Feasibility Simulator</div>
+<p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Adjust sliders to see how the full pipeline determines what AI app is possible.</p>
+<div style="display:flex;flex-direction:column;gap:14px;">
+<div class="slider-container">
+<div class="slider-label"><span>🔓 Weight Access</span><span id="accessLabel">Open Weights</span></div>
+<div class="slider-track" id="accessSlider" onclick="handleSliderClick(event,'access')">
+<div class="slider-fill" id="accessFill" style="width:100%;background:linear-gradient(90deg,var(--accent-cyan),var(--accent-purple))"></div>
+<div class="slider-thumb" id="accessThumb" style="left:100%"></div>
+</div>
+</div>
+<div class="slider-container">
+<div class="slider-label"><span>🔥 Distillation</span><span id="distillLabel">Fully Distilled (7B)</span></div>
+<div class="slider-track" id="distillSlider" onclick="handleSliderClick(event,'distill')">
+<div class="slider-fill" id="distillFill" style="width:50%;background:linear-gradient(90deg,var(--accent-purple),var(--accent-orange))"></div>
+<div class="slider-thumb" id="distillThumb" style="left:50%"></div>
+</div>
+</div>
+<div class="slider-container">
+<div class="slider-label"><span>🧩 MoE Sparsity</span><span id="moeLabel">Dense Model</span></div>
+<div class="slider-track" id="moeSlider" onclick="handleSliderClick(event,'moe')">
+<div class="slider-fill" id="moeFill" style="width:0%;background:linear-gradient(90deg,var(--accent-blue),var(--accent-cyan))"></div>
+<div class="slider-thumb" id="moeThumb" style="left:0%"></div>
+</div>
+</div>
+<div class="slider-container">
+<div class="slider-label"><span>⚡ Quantization</span><span id="quantLabel">INT4 (4-bit)</span></div>
+<div class="slider-track" id="quantSlider" onclick="handleSliderClick(event,'quant')">
+<div class="slider-fill" id="quantFill" style="width:25%;background:linear-gradient(90deg,var(--accent-orange),var(--accent-emerald))"></div>
+<div class="slider-thumb" id="quantThumb" style="left:25%"></div>
+</div>
+</div>
+<div class="slider-container">
+<div class="slider-label"><span>🚀 Speculative Decoding</span><span id="specLabel">Disabled</span></div>
+<div class="slider-track" id="specAppSlider" onclick="handleSliderClick(event,'specApp')">
+<div class="slider-fill" id="specAppFill" style="width:0%;background:linear-gradient(90deg,var(--accent-pink),var(--accent-purple))"></div>
+<div class="slider-thumb" id="specAppThumb" style="left:0%"></div>
+</div>
+</div>
+<div class="slider-container">
+<div class="slider-label"><span>🤖 Agent Layer</span><span id="agentLabel">No Agent</span></div>
+<div class="slider-track" id="agentAppSlider" onclick="handleSliderClick(event,'agentApp')">
+<div class="slider-fill" id="agentAppFill" style="width:0%;background:linear-gradient(90deg,var(--accent-amber),var(--accent-emerald))"></div>
+<div class="slider-thumb" id="agentAppThumb" style="left:0%"></div>
+</div>
+</div>
+</div>
+<div style="margin-top:18px;padding:16px;background:var(--bg-deep);border-radius:10px;border:1px solid var(--border-subtle);">
+<div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;">Resulting Capability</div>
+<div id="appResult" style="font-size:16px;font-weight:700;color:var(--accent-emerald);margin-bottom:4px;">✅ On-Device Personal Assistant</div>
+<div id="appResultDesc" style="font-size:12px;color:var(--text-secondary);line-height:1.5;">Runs entirely offline on a modern smartphone. No API costs, no latency, full privacy.</div>
+<div style="margin-top:12px;display:flex;gap:12px;font-size:11px;font-family:var(--font-mono);color:var(--text-muted);flex-wrap:wrap;">
+<span id="resultSize">~4GB model</span><span>•</span><span id="resultSpeed">~15 tok/s</span><span>•</span><span id="resultCost">$0 inference</span><span>•</span><span id="resultAgent">No autonomy</span>
+</div>
+</div>
+<div class="app-grid" style="margin-top:14px;">
+<div class="app-item" id="app1"><div class="app-icon">💬</div><div class="app-name">Local Chat</div><div class="app-meta">Privacy-first</div></div>
+<div class="app-item" id="app2"><div class="app-icon">📝</div><div class="app-name">Doc Assistant</div><div class="app-meta">Offline RAG</div></div>
+<div class="app-item" id="app3"><div class="app-icon">🎨</div><div class="app-name">Image Caption</div><div class="app-meta">Vision + LLM</div></div>
+<div class="app-item" id="app4"><div class="app-icon">🔧</div><div class="app-name">Code Helper</div><div class="app-meta">On-device IDE</div></div>
+</div>
+</div>
+<div class="card" style="margin-top:14px;">
+<div class="card-title">📋 How the Pipeline Shapes What's Possible</div>
+<table class="compare-table">
+<thead><tr><th>Stage</th><th>What Changes</th><th>App Impact</th></tr></thead>
+<tbody>
+<tr><td><strong style="color:var(--accent-cyan)">Open Weights</strong></td><td>Anyone can download & modify</td><td>Self-hosted apps, fine-tuned specialists, no vendor lock-in</td></tr>
+<tr><td><strong style="color:var(--accent-purple)">Distillation</strong></td><td>Large → Small with preserved skill</td><td>Affordable inference, edge deployment, real-time apps</td></tr>
+<tr><td><strong style="color:var(--accent-blue)">MoE</strong></td><td>Massive params, sparse compute</td><td>Frontier quality at mid-size cost, scalable serving</td></tr>
+<tr><td><strong style="color:var(--accent-orange)">Quantization</strong></td><td>32-bit → 4-bit precision</td><td>Phone apps, IoT devices, 8x cost reduction</td></tr>
+<tr><td><strong style="color:var(--accent-pink)">SpecDec</strong></td><td>Parallel token verification</td><td>2-4x faster UX, lower latency for interactive apps</td></tr>
+<tr><td><strong style="color:var(--accent-amber)">Agents</strong></td><td>Autonomous reasoning loops</td><td>Task-completion apps: booking, research, coding</td></tr>
+<tr><td><strong style="color:var(--accent-emerald)">App Layer</strong></td><td>All combined</td><td>New categories: private AI, offline agents, $0 assistants</td></tr>
+</tbody>
+</table>
+</div>
+<div class="mental-model">
+<h3>🧠 The Single Mental Model</h3>
+<p>Think of AI capability as <strong>water flowing downhill</strong>. Frontier labs are the mountain spring. <strong>Open weights</strong> unlock the reservoir gates. <strong>Distillation</strong> builds aqueducts to direct flow. <strong>MoE</strong> creates multiple channels so more water moves without widening the riverbed. <strong>Quantization</strong> filters and compresses the flow for the smallest villages. <strong>SpecDec</strong> adds pressure pumps for speed. <strong>Agents</strong> are the irrigation systems that decide where the water goes. The <strong>app layer</strong> is what grows in the valley — entirely dependent on whether the water reaches it.</p>
+<div class="flow-summary">
+<span class="step" style="color:var(--accent-cyan)">🧠 Lab</span>
+<span class="arrow-sm">→</span>
+<span class="step" style="color:var(--accent-cyan)">🔓 Open</span>
+<span class="arrow-sm">→</span>
+<span class="step" style="color:var(--accent-purple)">🔥 Distill</span>
+<span class="arrow-sm">→</span>
+<span class="step" style="color:var(--accent-blue)">🧩 MoE</span>
+<span class="arrow-sm">→</span>
+<span class="step" style="color:var(--accent-orange)">⚡ Quant</span>
+<span class="arrow-sm">→</span>
+<span class="step" style="color:var(--accent-pink)">🚀 SpecDec</span>
+<span class="arrow-sm">→</span>
+<span class="step" style="color:var(--accent-amber)">🤖 Agent</span>
+<span class="arrow-sm">→</span>
+<span class="step" style="color:var(--accent-emerald)">📱 App</span>
+</div>
+</div>
+</div>
+</div>
 <script>
-(function(){
-"use strict";
-var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+// ===================== PWA INSTALL =====================
+let deferredPrompt=null;
+const installBanner=document.getElementById('installBanner');
+const installBtn=document.getElementById('installBtn');
 
-/* ============ IN-PAGE NAVIGATION (sandbox-safe) ============ */
-(function smoothNav(){
-  var links = document.querySelectorAll('a[href^="#"]');
-  for(var i=0;i<links.length;i++){
-    links[i].addEventListener("click", function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      var id = this.getAttribute("href").slice(1);
-      var target = document.getElementById(id);
-      if(target) target.scrollIntoView(reduceMotion ? {} : {behavior:"smooth"});
-    });
-  }
-})();
+window.addEventListener('beforeinstallprompt',(e)=>{e.preventDefault();deferredPrompt=e;installBanner.classList.add('show');});
+installBtn.addEventListener('click',async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();const{outcome}=await deferredPrompt.userChoice;if(outcome==='accepted')installBanner.classList.remove('show');deferredPrompt=null;});
+function hideInstallBanner(){installBanner.classList.remove('show');}
 
-/* ============ HERO FLOW CANVAS ============ */
-(function heroFlow(){
-  var cv = document.getElementById("heroFlow");
-  if(!cv) return;
-  var ctx = cv.getContext("2d");
-  var particles = [];
-  function size(){
-    var hero = cv.parentElement;
-    cv.width = hero.clientWidth * (window.devicePixelRatio||1);
-    cv.height = hero.clientHeight * (window.devicePixelRatio||1);
-  }
-  size();
-  window.addEventListener("resize", size);
-  for(var i=0;i<46;i++){
-    particles.push({
-      x: Math.random(), y: Math.random(),
-      s: 0.0004 + Math.random()*0.0009,
-      r: 0.8 + Math.random()*1.7,
-      a: 0.15 + Math.random()*0.5
-    });
-  }
-  function tick(){
-    ctx.clearRect(0,0,cv.width,cv.height);
-    for(var i=0;i<particles.length;i++){
-      var p = particles[i];
-      p.y += p.s;
-      if(p.y > 1.02){ p.y = -0.02; p.x = Math.random(); }
-      var drift = Math.sin((p.y*6)+(i))*0.015;
-      ctx.beginPath();
-      ctx.arc((p.x+drift)*cv.width, p.y*cv.height, p.r*(window.devicePixelRatio||1), 0, Math.PI*2);
-      ctx.fillStyle = "rgba(212,175,106,"+p.a+")";
-      ctx.fill();
-    }
-    if(!reduceMotion) requestAnimationFrame(tick);
-  }
-  tick();
-})();
+// Register inline Service Worker
+const swCode=`self.addEventListener('install',e=>{self.skipWaiting();});self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim());});self.addEventListener('fetch',e=>{e.respondWith(fetch(e.request).catch(()=>new Response('<h1 style="color:#f3f4f6;background:#0a0e17;padding:40px;font-family:sans-serif;">Offline</h1>',{headers:{'Content-Type':'text/html'}})));});`;
+if('serviceWorker'in navigator){const blob=new Blob([swCode],{type:'application/javascript'});navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});}
 
-/* ============ STAGE 1 : WEIGHT VAULT ============ */
-(function weightVault(){
-  var wbody = document.getElementById("wbody");
-  var matrix = document.getElementById("wmatrix");
-  var actsBox = document.getElementById("acts");
-  var say = document.getElementById("vaultSay");
-  var btnOpen = document.getElementById("modeOpen");
-  var btnClosed = document.getElementById("modeClosed");
-  var mode = "open";
+// ===================== STATE =====================
+let currentTab='weights',weightsOpen=true,tempValue=2.0,precisionLevel=4,distillProgress=0;
+let appState={access:1.0,distill:0.5,moe:0.0,quant:0.25,spec:0.0,agent:0.0};
 
-  // deterministic pseudo-random weights so the matrix is stable
-  var seed = 42;
-  function rnd(){ seed = (seed*9301+49297)%233280; return seed/233280; }
-  var rowsHtml = "";
-  for(var r=0;r<7;r++){
-    rowsHtml += "<tr>";
-    for(var c=0;c<6;c++){
-      var v = (rnd()*2-1);
-      var hot = Math.abs(v) > 0.82 ? " class='hot'" : "";
-      rowsHtml += "<td"+hot+">"+(v>=0?"+":"")+v.toFixed(4)+"</td>";
-    }
-    rowsHtml += "</tr>";
-  }
-  wbody.innerHTML = rowsHtml;
+// ===================== TAB SWITCHING =====================
+function switchTab(tab){currentTab=tab;document.querySelectorAll('.tab-content').forEach(el=>{el.classList.add('hidden');el.classList.remove('fade-in');});document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.remove('active'));document.querySelectorAll('.flow-node').forEach(node=>node.classList.remove('active'));const content=document.getElementById('tab-'+tab);if(content){content.classList.remove('hidden');content.classList.add('fade-in');}const tabBtn=document.querySelector('.tab-btn[data-tab="'+tab+'"]');if(tabBtn)tabBtn.classList.add('active');const flowNode=document.querySelector('.flow-node[data-tab="'+tab+'"]');if(flowNode)flowNode.classList.add('active');if(tab==='weights')initWeightDemo();if(tab==='quantization')initBitDemo();if(tab==='moe')initMoE();if(tab==='speculative')initSpeculative();if(tab==='apps')updateAppSimulator();}
 
-  var actions = [
-    { id:"inspect",  ic:"🔍", label:"Inspect the weights",
-      open:"Allowed. You can study every parameter — interpretability research, safety audits, bias probes.",
-      closed:"Denied. The weights never leave the lab's datacenter. You see outputs, not internals." },
-    { id:"finetune", ic:"🛠️", label:"Fine-tune on my data",
-      open:"Allowed. Full fine-tuning or LoRA on your own hardware, your data never leaves your control.",
-      closed:"Partially. Only if the lab offers a fine-tuning API — your data goes to them, on their terms." },
-    { id:"selfhost", ic:"🖥️", label:"Self-host it",
-      open:"Allowed. Run it on your servers, air-gapped if needed. No per-token bill, no deprecation risk.",
-      closed:"Denied. Capability is rented per token. If the lab retires the model, your app changes overnight." },
-    { id:"distill",  ic:"⚗️", label:"Distill a student from it",
-      open:"Allowed. Query it freely as a teacher and train your own small student — this is Stage 02.",
-      closed:"Restricted. Most closed-model terms of service prohibit training competitors on outputs." },
-    { id:"quant",    ic:"📦", label:"Quantize it for the edge",
-      open:"Allowed. Compress to INT8/INT4 yourself and ship it inside your app — this is Stage 03.",
-      closed:"Denied. You can't compress a file you don't have. The lab decides what sizes exist." },
-    { id:"api",      ic:"⚡", label:"Call it via API",
-      open:"Allowed. Many hosts serve open models — or run your own endpoint.",
-      closed:"Allowed. This is the product. Usually the strongest raw capability available, zero ops burden." }
-  ];
+// ===================== WEIGHTS DEMO =====================
+function initWeightDemo(){const grid=document.getElementById('weightGrid');if(!grid)return;grid.innerHTML='';for(let i=0;i<400;i++){const cell=document.createElement('div');cell.className='weight-cell';const hue=Math.random()*60+180;const lightness=30+Math.random()*40;cell.style.background='hsl('+hue+',70%,'+lightness+'%)';cell.title='Weight '+i+': '+(Math.random()*2-1).toFixed(6);grid.appendChild(cell);}}
+function regenerateWeights(){initWeightDemo();}
+function toggleOpenClosed(){weightsOpen=!weightsOpen;const overlay=document.getElementById('weightOverlay');const status=document.getElementById('weightStatus');if(!overlay||!status)return;if(weightsOpen){overlay.style.display='none';status.textContent='🔓 Open — Full Access';status.style.color='var(--accent-emerald)';}else{overlay.style.display='flex';status.textContent='🔒 Closed — API Only';status.style.color='var(--accent-rose)';}}
 
-  var allowMap = {
-    open:   { inspect:1, finetune:1, selfhost:1, distill:1, quant:1, api:1 },
-    closed: { inspect:0, finetune:0.5, selfhost:0, distill:0.5, quant:0, api:1 }
-  };
+// ===================== SLIDER HANDLER =====================
+function handleSliderClick(e,type){const track=e.currentTarget;const rect=track.getBoundingClientRect();const x=e.clientX-rect.left;const pct=Math.max(0,Math.min(1,x/rect.width));if(type==='temp'){tempValue=0.5+pct*4.5;const tv=document.getElementById('tempValue');if(tv)tv.textContent='T = '+tempValue.toFixed(1);const tf=document.getElementById('tempFill');if(tf)tf.style.width=(pct*100)+'%';const tt=document.getElementById('tempThumb');if(tt)tt.style.left=(pct*100)+'%';updateStudentOutput();}else if(type==='prec'){precisionLevel=Math.round(pct*4);updatePrecisionDemo();}else if(type==='access'){appState.access=pct;updateAppSimulator();}else if(type==='distill'){appState.distill=pct;updateAppSimulator();}else if(type==='moe'){appState.moe=pct;updateAppSimulator();}else if(type==='quant'){appState.quant=pct;updateAppSimulator();}else if(type==='specApp'){appState.spec=pct;updateAppSimulator();}else if(type==='agentApp'){appState.agent=pct;updateAppSimulator();}}
 
-  actions.forEach(function(a){
-    var b = document.createElement("button");
-    b.className = "act";
-    b.setAttribute("data-id", a.id);
-    b.innerHTML = "<span>"+a.ic+"</span> "+a.label+" <span class='st'></span>";
-    b.addEventListener("click", function(){
-      var txt = mode === "open" ? a.open : a.closed;
-      var verdict = allowMap[mode][a.id];
-      var head = verdict === 1 ? "<b>✓ "+a.label+"</b> — " : (verdict === 0 ? "<b>✕ "+a.label+"</b> — " : "<b>△ "+a.label+"</b> — ");
-      say.innerHTML = head + txt;
-    });
-    actsBox.appendChild(b);
-  });
+// ===================== DISTILLATION DEMO =====================
+function updateStudentOutput(){const quality=Math.max(0.5,1-Math.abs(tempValue-2.0)*0.15);const match=Math.round(quality*100);const sq=document.getElementById('studentQuality');if(sq)sq.textContent='Quality: '+match+'% match';const base=[0.65,0.25,0.08,0.02];const noise=(tempValue-2.0)*0.03;const out=base.map(v=>Math.max(0,v+(Math.random()-0.5)*noise*2));const sum=out.reduce((a,b)=>a+b,0);const normalized=out.map(v=>(v/sum).toFixed(2));const so=document.getElementById('studentOutput');if(so)so.textContent='Output: ['+normalized.join(', ')+']';}
+function runDistillation(){const log=document.getElementById('distillLog');if(!log)return;const steps=['<span class="info">> Loading teacher model (70B params)...</span>','<span class="info">> Loading student architecture (7B params)...</span>','<span class="info">> Computing soft targets with T='+tempValue.toFixed(1)+'...</span>','<span class="warn">> Backpropagating KL divergence loss...</span>','<span class="ok">> Step '+(Math.round(distillProgress*100+10))+'/1000: Loss = '+(2.5-distillProgress*2).toFixed(4)+'</span>','<span class="ok">> Student accuracy improving...</span>','<span class="ok">> ✅ Distillation complete! Student achieves 94% teacher quality.</span>'];let i=0;log.innerHTML='';const interval=setInterval(()=>{if(i>=steps.length){clearInterval(interval);distillProgress=Math.min(1,distillProgress+0.1);const sb=document.getElementById('studentBar');if(sb)sb.style.width=(14+distillProgress*10)+'%';return;}log.innerHTML+=steps[i]+'<br>';i++;},280);}
+function resetDistill(){distillProgress=0;const sb=document.getElementById('studentBar');if(sb)sb.style.width='14%';const log=document.getElementById('distillLog');if(log)log.innerHTML='> Ready to distill knowledge...';updateStudentOutput();}
 
-  function paint(){
-    matrix.classList.toggle("locked", mode === "closed");
-    btnOpen.classList.toggle("on", mode === "open");
-    btnClosed.classList.toggle("on", mode === "closed");
-    var kids = actsBox.children;
-    for(var i=0;i<kids.length;i++){
-      var id = kids[i].getAttribute("data-id");
-      var v = allowMap[mode][id];
-      var st = kids[i].querySelector(".st");
-      st.className = "st " + (v === 0 ? "no" : "ok");
-      st.textContent = v === 1 ? "ALLOWED" : (v === 0 ? "DENIED" : "LIMITED");
-    }
-    say.innerHTML = mode === "open"
-      ? "Weights in hand: the whole downstream pipeline is yours. Tap any action."
-      : "Weights sealed: you consume capability through a narrow pipe. Tap any action.";
-  }
-  btnOpen.addEventListener("click", function(){ mode="open"; paint(); });
-  btnClosed.addEventListener("click", function(){ mode="closed"; paint(); });
-  paint();
-})();
+// ===================== QUANTIZATION DEMO =====================
+const precisionConfigs=[{name:'1-bit (BitNet)',bits:1,size:3,speed:8.0,quality:65,color:'#ef4444'},{name:'INT4 (4-bit)',bits:4,size:12,speed:4.5,quality:88,color:'#f97316'},{name:'INT8 (8-bit)',bits:8,size:25,speed:2.8,quality:96,color:'#fbbf24'},{name:'FP16 (16-bit)',bits:16,size:50,speed:1.5,quality:99,color:'#22d3ee'},{name:'FP32 (32-bit)',bits:32,size:100,speed:1.0,quality:100,color:'#a78bfa'}];
+function initBitDemo(){updatePrecisionDemo();}
+function updatePrecisionDemo(){const config=precisionConfigs[precisionLevel];const pct=precisionLevel/4;const pl=document.getElementById('precisionLabel');if(pl)pl.textContent=config.name;const pf=document.getElementById('precFill');if(pf)pf.style.width=(pct*100)+'%';const pt=document.getElementById('precThumb');if(pt)pt.style.left=(pct*100)+'%';const sm=document.getElementById('sizeMetric');if(sm){sm.textContent=config.size+'%';sm.style.color=config.color;}const spm=document.getElementById('speedMetric');if(spm)spm.textContent=config.speed+'x';const qm=document.getElementById('qualityMetric');if(qm)qm.textContent=config.quality+'%';const container=document.getElementById('bitVisualizer');if(!container)return;container.innerHTML='';precisionConfigs.forEach((pc,idx)=>{const row=document.createElement('div');row.className='bit-row';const label=document.createElement('div');label.className='bit-label';label.textContent=pc.bits+'-bit';label.style.color=idx===precisionLevel?config.color:'var(--text-muted)';const blocks=document.createElement('div');blocks.className='bit-blocks';const numBlocks=Math.min(32,pc.bits);for(let b=0;b<numBlocks;b++){const block=document.createElement('div');block.className='bit-block';if(idx===precisionLevel){block.style.background=config.color;block.style.boxShadow='0 0 6px '+config.color+'40';}else{block.style.background='var(--border-subtle)';}blocks.appendChild(block);}const info=document.createElement('div');info.className='bit-info';info.textContent=pc.size+'% size';row.appendChild(label);row.appendChild(blocks);row.appendChild(info);container.appendChild(row);});}
 
-/* ============ STAGE 2 : DISTILLATION STUDIO ============ */
-(function distillStudio(){
-  var tokens = ["Paris","Lyon","France","Nice","London"];
-  var teacher = [0.78,0.09,0.06,0.04,0.03];
-  var student, steps;
-  var tBox = document.getElementById("teacherBars");
-  var sBox = document.getElementById("studentBars");
-  var say = document.getElementById("distillSay");
-  var pct = document.getElementById("matchPct");
-  var fill = document.getElementById("matchFill");
+// ===================== MOE DEMO =====================
+const expertColors=['#22d3ee','#a78bfa','#fbbf24','#34d399','#fb923c','#f472b6','#60a5fa','#fb7185'];
+const expertNames=['Math','Code','Lang','Logic','Facts','Creative','Vision','Audio'];
+let moeStep=0;
+const sampleTokens=['calculate','def','the','if','Paris','poem','image','sound'];
+function initMoE(){renderMoE(-1);}
+function renderMoE(activeTokenIdx){const viz=document.getElementById('moeViz');if(!viz)return;viz.innerHTML='';for(let layer=0;layer<3;layer++){const row=document.createElement('div');row.className='moe-layer';const label=document.createElement('div');label.className='moe-layer-label';label.textContent='Layer '+(layer+1);const expertsDiv=document.createElement('div');expertsDiv.className='moe-experts';const token=activeTokenIdx>=0?sampleTokens[activeTokenIdx%sampleTokens.length]:'';const hash=token.split('').reduce((a,c)=>a+c.charCodeAt(0),0);const active1=hash%8;const active2=(hash*3+5)%8;for(let e=0;e<8;e++){const expert=document.createElement('div');expert.className='moe-expert';expert.style.background=expertColors[e]+'20';expert.style.color=expertColors[e];expert.style.borderColor=expertColors[e]+'40';expert.textContent=expertNames[e];if(activeTokenIdx>=0&&(e===active1||e===active2))expert.classList.add('active');else if(activeTokenIdx>=0)expert.classList.add('inactive');expertsDiv.appendChild(expert);}const tokenDiv=document.createElement('div');tokenDiv.className='moe-token';tokenDiv.textContent=activeTokenIdx>=0?'"'+token+'"':'...';row.appendChild(label);row.appendChild(expertsDiv);row.appendChild(tokenDiv);viz.appendChild(row);}}
+function runMoE(){moeStep=(moeStep+1)%sampleTokens.length;renderMoE(moeStep);}
+function resetMoE(){moeStep=-1;renderMoE(-1);}
 
-  function barRow(label){
-    var row = document.createElement("div");
-    row.className = "bar-row";
-    row.innerHTML = "<span class='lbl'>"+label+"</span><div class='bar-track'><div class='bar-fill'></div></div><span class='val'></span>";
-    return row;
-  }
-  tokens.forEach(function(t){ tBox.appendChild(barRow(t)); sBox.appendChild(barRow(t)); });
+// ===================== SPECULATIVE DECODING DEMO =====================
+const sampleWords=['The','quick','brown','fox','jumps','over','the','lazy','dog','and','runs','fast'];
+let specStep=0,totalAccepted=0,totalRejected=0;
+function initSpeculative(){specStep=0;totalAccepted=0;totalRejected=0;updateSpecStats();const dt=document.getElementById('draftTokens');if(dt)dt.innerHTML='';const vt=document.getElementById('verifyTokens');if(vt)vt.innerHTML='';const at=document.getElementById('acceptTokens');if(at)at.innerHTML='';['specStep1','specStep2','specStep3'].forEach((id,i)=>{const el=document.getElementById(id);if(el)el.classList.toggle('active',i===0);});}
+function runSpeculative(){const draftContainer=document.getElementById('draftTokens');const verifyContainer=document.getElementById('verifyTokens');const acceptContainer=document.getElementById('acceptTokens');if(!draftContainer||!verifyContainer||!acceptContainer)return;document.getElementById('specStep1').classList.add('active');document.getElementById('specStep2').classList.remove('active');document.getElementById('specStep3').classList.remove('active');const draftCount=3+Math.floor(Math.random()*3);const draftTokens=[];draftContainer.innerHTML='';for(let i=0;i<draftCount;i++){const word=sampleWords[(specStep+i)%sampleWords.length];draftTokens.push(word);const span=document.createElement('span');span.className='spec-token draft';span.textContent=word;draftContainer.appendChild(span);}setTimeout(()=>{document.getElementById('specStep1').classList.remove('active');document.getElementById('specStep2').classList.add('active');verifyContainer.innerHTML='';draftTokens.forEach(word=>{const span=document.createElement('span');span.className='spec-token draft';span.textContent=word;verifyContainer.appendChild(span);});setTimeout(()=>{document.getElementById('specStep2').classList.remove('active');document.getElementById('specStep3').classList.add('active');const acceptRate=0.6+Math.random()*0.3;acceptContainer.innerHTML='';for(let i=0;i<draftTokens.length;i++){const word=draftTokens[i];const isAccepted=Math.random()<acceptRate||i===0;const span=document.createElement('span');if(isAccepted){span.className='spec-token verified';totalAccepted++;}else{span.className='spec-token rejected';span.textContent=word;totalRejected++;const corrected=sampleWords[(specStep+i+1)%sampleWords.length];const correctSpan=document.createElement('span');correctSpan.className='spec-token verified';correctSpan.textContent=corrected;acceptContainer.appendChild(correctSpan);totalAccepted++;break;}span.textContent=word;acceptContainer.appendChild(span);}specStep+=draftTokens.length;updateSpecStats();},400);},400);}
+function updateSpecStats(){const total=totalAccepted+totalRejected;const speedup=total>0?(totalAccepted/(totalAccepted-totalRejected||1)).toFixed(1):'1.0';const ss=document.getElementById('specSpeedup');if(ss)ss.textContent=speedup+'x';const sa=document.getElementById('specAccepted');if(sa)sa.textContent=totalAccepted;const sr=document.getElementById('specRejected');if(sr)sr.textContent=totalRejected;}
+function resetSpeculative(){initSpeculative();}
 
-  function render(box, dist){
-    var rows = box.children;
-    for(var i=0;i<rows.length;i++){
-      rows[i].querySelector(".bar-fill").style.width = (dist[i]*100)+"%";
-      rows[i].querySelector(".val").textContent = (dist[i]*100).toFixed(0)+"%";
-    }
-  }
-  function normalize(d){
-    var s = d.reduce(function(a,b){return a+b;},0);
-    return d.map(function(v){return v/s;});
-  }
-  function match(){
-    // simple similarity: 1 - half the total variation distance
-    var tv = 0;
-    for(var i=0;i<teacher.length;i++) tv += Math.abs(teacher[i]-student[i]);
-    return Math.max(0, Math.round((1 - tv/2)*100));
-  }
-  function paintMatch(){
-    var m = match();
-    pct.textContent = m+"%";
-    fill.style.width = m+"%";
-  }
-  function reset(){
-    student = [0.2,0.2,0.2,0.2,0.2];
-    steps = {soft:0, hard:0};
-    render(tBox, teacher);
-    render(sBox, student);
-    paintMatch();
-    say.innerHTML = "Student reset to a flat guess. Compare the two training modes.";
-  }
+// ===================== AGENT DEMO =====================
+const agentScenarios=[{perceive:'User asks: "Find cheapest flight NYC to London next week"',reason:'I need to search flights, compare prices, check dates.',act:'🔍 search_flights(origin="NYC", dest="London", date="next_week")',observe:'Found 3 flights: BA $520, Virgin $480, Delta $510. Virgin cheapest.',tool:'search_flights'},{perceive:'User asks: "Calculate compound interest on $10,000 at 7% for 5 years"',reason:'Use calculator tool for precise math.',act:'🧮 calculate(expression="10000 * (1 + 0.07)^5")',observe:'Result: $14,025.52. Interest earned: $4,025.52.',tool:'calculator'},{perceive:'User asks: "Schedule team meeting for Tuesday 2pm"',reason:'Check calendar availability, send invites.',act:'📅 check_availability(day="Tuesday", time="14:00") → create_event()',observe:'All 5 members available. Meeting scheduled. Invites sent.',tool:'calendar'}];
+let agentScenarioIdx=0,agentStepIdx=0;
+function runAgent(){const scenario=agentScenarios[agentScenarioIdx];const steps=['perceive','reason','act','observe'];const stepEls=['agentStep1','agentStep2','agentStep3','agentStep4'];const log=document.getElementById('agentLog');if(!log)return;stepEls.forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('active');});const currentEl=document.getElementById(stepEls[agentStepIdx]);if(currentEl)currentEl.classList.add('active');const step=steps[agentStepIdx];const content=scenario[step];const icons={perceive:'👁️',reason:'🧠',act:'🔧',observe:'👁️'};log.innerHTML+='<span class="info">'+icons[step]+' ['+step.toUpperCase()+']</span> '+content+'<br>';if(step==='act'){document.querySelectorAll('.agent-tool').forEach(t=>t.classList.remove('active'));const toolMap={search_flights:0,calculator:1,calendar:2,code:3,email:4,database:5};const toolIdx=toolMap[scenario.tool];const tools=document.querySelectorAll('.agent-tool');if(tools[toolIdx])tools[toolIdx].classList.add('active');}agentStepIdx++;if(agentStepIdx>=4){agentStepIdx=0;agentScenarioIdx=(agentScenarioIdx+1)%agentScenarios.length;setTimeout(()=>{log.innerHTML+='<span class="ok">✅ Task complete. Starting next scenario...</span><br><br>';},600);}}
+function resetAgent(){agentStepIdx=0;agentScenarioIdx=0;const log=document.getElementById('agentLog');if(log)log.innerHTML='> Agent initialized. Waiting for task...';['agentStep1','agentStep2','agentStep3','agentStep4'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('active');});document.querySelectorAll('.agent-tool').forEach(t=>t.classList.remove('active'));}
 
-  document.getElementById("btnSoft").addEventListener("click", function(){
-    steps.soft++;
-    student = normalize(student.map(function(v,i){ return v + (teacher[i]-v)*0.45; }));
-    render(sBox, student);
-    paintMatch();
-    var m = match();
-    say.innerHTML = "<b>Distillation step "+steps.soft+":</b> the student moves toward the teacher's <b>whole distribution</b> — including that Lyon &gt; London. Behaviour match: <b>"+m+"%</b>"+(m>=95?" — near-teacher behaviour at ~1/9th the size. That's the trick.":".");
-  });
+// ===================== APP SIMULATOR =====================
+function updateAppSimulator(){const setSlider=(id,val)=>{const f=document.getElementById(id+'Fill');const t=document.getElementById(id+'Thumb');if(f)f.style.width=(val*100)+'%';if(t)t.style.left=(val*100)+'%';};setSlider('access',appState.access);setSlider('distill',appState.distill);setSlider('moe',appState.moe);setSlider('quant',appState.quant);setSlider('specApp',appState.spec);setSlider('agentApp',appState.agent);const al=document.getElementById('accessLabel');if(al)al.textContent=appState.access>0.5?'Open Weights':'Closed/API Only';const dl=document.getElementById('distillLabel');const dLabels=['Raw Frontier (400B+)','Partial (70B)','Fully Distilled (7B)','Tiny (1.5B)'];if(dl)dl.textContent=dLabels[Math.min(3,Math.floor(appState.distill*3.9))];const ml=document.getElementById('moeLabel');const mLabels=['Dense Model','Light MoE (4 experts)','Standard MoE (8 experts)','Heavy MoE (64 experts)'];if(ml)ml.textContent=mLabels[Math.min(3,Math.floor(appState.moe*3.9))];const ql=document.getElementById('quantLabel');const qLabels=['FP32 (32-bit)','INT4 (4-bit)','INT8 (8-bit)','FP16 (16-bit)','FP32 (32-bit)'];if(ql)ql.textContent=qLabels[Math.min(4,Math.floor(appState.quant*4.9))];const sl=document.getElementById('specLabel');if(sl)sl.textContent=appState.spec>0.5?'Enabled (2-4x speedup)':'Disabled';const agl=document.getElementById('agentLabel');if(agl)agl.textContent=appState.agent>0.5?'Full Agent Loop':'No Agent';const score=(appState.access*0.2)+(appState.distill*0.2)+(appState.moe*0.1)+((1-appState.quant)*0.2)+(appState.spec*0.1)+(appState.agent*0.2);const resultEl=document.getElementById('appResult');const descEl=document.getElementById('appResultDesc');const sizeEl=document.getElementById('resultSize');const speedEl=document.getElementById('resultSpeed');const costEl=document.getElementById('resultCost');const agentEl=document.getElementById('resultAgent');if(!resultEl)return;if(appState.access<0.3){resultEl.textContent='🔒 API-Only SaaS App';resultEl.style.color='var(--accent-rose)';descEl.textContent='Thin wrapper around someone else's API. High latency, ongoing costs, no customization.';if(sizeEl)sizeEl.textContent='~0MB local';if(speedEl)speedEl.textContent='~2s latency';if(costEl)costEl.textContent='$0.01-0.10 / 1K tok';if(agentEl)agentEl.textContent=appState.agent>0.5?'Agent: cloud-only':'No autonomy';}else if(score<0.35){resultEl.textContent='☁️ Self-Hosted Cloud App';resultEl.style.color='var(--accent-amber)';descEl.textContent='You control the model but need expensive GPU servers. Great for privacy, scales with cost.';if(sizeEl)sizeEl.textContent='~140GB VRAM';if(speedEl)speedEl.textContent='~30 tok/s';if(costEl)costEl.textContent='~$3/hr compute';if(agentEl)agentEl.textContent=appState.agent>0.5?'Agent: self-hosted':'No autonomy';}else if(score<0.6){resultEl.textContent='💻 Desktop AI Tool';resultEl.style.color='var(--accent-cyan)';descEl.textContent='Runs on consumer GPUs or Apple Silicon. One-time download, no recurring API costs.';if(sizeEl)sizeEl.textContent='~35GB download';if(speedEl)speedEl.textContent=appState.spec>0.5?'~60 tok/s (SpecDec)':'~25 tok/s';if(costEl)costEl.textContent='$0 inference';if(agentEl)agentEl.textContent=appState.agent>0.5?'Agent: local':'No autonomy';}else{resultEl.textContent='✅ On-Device / Edge App';resultEl.style.color='var(--accent-emerald)';descEl.textContent='Runs entirely on phone or IoT. Zero network dependency, complete privacy, instant response.';if(sizeEl)sizeEl.textContent='~4GB model';if(speedEl)speedEl.textContent=appState.spec>0.5?'~45 tok/s (SpecDec)':'~15 tok/s';if(costEl)costEl.textContent='$0 inference';if(agentEl)agentEl.textContent=appState.agent>0.5?'Agent: on-device':'No autonomy';}const apps=document.querySelectorAll('.app-item');apps.forEach((app,idx)=>{if(score>0.6){app.style.opacity='1';app.style.borderColor='var(--accent-emerald)';}else if(score>0.3){app.style.opacity=idx<2?'1':'0.4';app.style.borderColor=idx<2?'var(--accent-cyan)':'var(--border-subtle)';}else{app.style.opacity=idx===0?'1':'0.3';app.style.borderColor=idx===0?'var(--accent-amber)':'var(--border-subtle)';}});}
 
-  document.getElementById("btnHard").addEventListener("click", function(){
-    steps.hard++;
-    // hard label: only "Paris" is correct; push it up, squash others equally
-    student = normalize(student.map(function(v,i){ return i===0 ? v + (1-v)*0.45 : v*0.55; }));
-    render(sBox, student);
-    paintMatch();
-    say.innerHTML = "<b>Hard-label step "+steps.hard+":</b> only \"Paris = correct\" is taught. The wrong answers collapse toward <b>equal nothing</b> — the geography hidden in their ranking (Lyon vs London) is lost.";
-  });
-
-  document.getElementById("btnReset").addEventListener("click", reset);
-  reset();
-})();
-
-/* ============ STAGE 3 : QUANTIZATION BENCH ============ */
-(function quantBench(){
-  var levels = [
-    { name:"FP32", bits:32, mem:32, q:0,   err:"~0", errNote:"(reference)" },
-    { name:"FP16", bits:16, mem:16, q:0,   err:"~0.0001", errNote:"negligible" },
-    { name:"INT8", bits:8,  mem:8,  q:256, err:"~0.004", errNote:"barely visible" },
-    { name:"INT4", bits:4,  mem:4,  q:16,  err:"~0.06",  errNote:"the staircase" }
-  ];
-  var range = document.getElementById("qRange");
-  var badge = document.getElementById("qBadge");
-  var mem = document.getElementById("qMem");
-  var err = document.getElementById("qErr");
-  var stops = document.getElementById("qStops").children;
-  var devs = document.querySelectorAll(".dev");
-  var cv = document.getElementById("qCanvas");
-  var ctx = cv.getContext("2d");
-
-  // deterministic weight curve
-  function weightAt(x){ // x in 0..1, returns -1..1
-    return 0.62*Math.sin(x*7.1) + 0.3*Math.sin(x*17.3+1.4) + 0.08*Math.sin(x*41+0.5);
-  }
-  function quantize(v, nLevels){
-    if(!nLevels) return v;
-    var step = 2/(nLevels-1);
-    return Math.round((v+1)/step)*step - 1;
-  }
-  function draw(lv){
-    var W = cv.width, H = cv.height, pad = 14;
-    ctx.clearRect(0,0,W,H);
-    // midline
-    ctx.strokeStyle = "rgba(255,255,255,0.06)";
-    ctx.beginPath(); ctx.moveTo(pad,H/2); ctx.lineTo(W-pad,H/2); ctx.stroke();
-    // original curve
-    ctx.strokeStyle = "rgba(212,175,106,0.85)";
-    ctx.lineWidth = 1.6;
-    ctx.beginPath();
-    var n = 220;
-    for(var i=0;i<=n;i++){
-      var x = i/n;
-      var y = weightAt(x);
-      var px = pad + x*(W-2*pad);
-      var py = H/2 - y*(H/2-pad);
-      if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
-    }
-    ctx.stroke();
-    // stored values
-    ctx.fillStyle = "#EDE9E0";
-    var dots = 90;
-    for(var j=0;j<=dots;j++){
-      var xx = j/dots;
-      var qv = quantize(weightAt(xx), lv.q);
-      var dx = pad + xx*(W-2*pad);
-      var dy = H/2 - qv*(H/2-pad);
-      ctx.beginPath();
-      ctx.arc(dx,dy,2.1,0,Math.PI*2);
-      ctx.fill();
-    }
-  }
-  function paint(){
-    var idx = parseInt(range.value,10);
-    var lv = levels[idx];
-    badge.textContent = lv.name+" · "+lv.bits+" bits / weight";
-    mem.innerHTML = lv.mem+" <small>GB</small>";
-    err.innerHTML = lv.err+" <small>"+lv.errNote+"</small>";
-    for(var i=0;i<stops.length;i++) stops[i].className = i===idx ? "on" : "";
-    for(var d=0;d<devs.length;d++){
-      var cap = parseFloat(devs[d].getAttribute("data-cap"));
-      devs[d].classList.toggle("fit", lv.mem <= cap);
-    }
-    draw(lv);
-  }
-  range.addEventListener("input", paint);
-  paint();
-})();
-
-/* ============ STAGE 4 : DEPLOYMENT FITTER ============ */
-(function deployFitter(){
-  var cases = {
-    farmer: {
-      path:["open","distill","quant"],
-      title:"Recommended: open weights → distilled student → INT4 on-device",
-      why:"No network means <em>no API of any kind</em> — closed weights are out on day one (Stage 01). A distilled ~3B student keeps the agronomy knowledge that matters (Stage 02), and INT4 quantization squeezes it into a budget phone's memory (Stage 03). The app layer wraps it in a local, offline-first PWA."
-    },
-    clinic: {
-      path:["open","quant"],
-      title:"Recommended: open weights, self-hosted on-premises (quantized to fit the hardware)",
-      why:"The constraint is <em>data residency</em>, not size. Open weights let you self-host inside the hospital network (Stage 01). Quantizing to INT8 lets a mid-size model run on a single on-prem GPU with almost no quality loss (Stage 03). Patient text never crosses the firewall."
-    },
-    consumer: {
-      path:["frontier","distill"],
-      title:"Recommended: distilled model behind a cheap API — frontier only for hard cases",
-      why:"At millions of users, <em>cost per token is the product</em>. Route 95% of traffic to a small distilled model (Stage 02) — often distilled by the lab itself from its own frontier teacher — and escalate the tricky 5% to the frontier closed API (Stage 01). This routing pattern is the modern application layer."
-    },
-    agent: {
-      path:["frontier"],
-      title:"Recommended: frontier closed API, full stop",
-      why:"When the task is at the <em>edge of what any model can do</em>, nothing downstream of the flow has the capability — distillation and quantization both trade capability for size (Stages 02–03), and here capability is the whole point. You rent the biggest brain available and spend your effort on the harness around it."
-    }
-  };
-  var btns = document.querySelectorAll(".case-btn");
-  var nodes = document.querySelectorAll(".path-node");
-  var verdict = document.getElementById("verdict");
-  btns.forEach(function(b){
-    b.addEventListener("click", function(){
-      btns.forEach(function(x){ x.classList.remove("on"); });
-      b.classList.add("on");
-      var c = cases[b.getAttribute("data-case")];
-      nodes.forEach(function(n){
-        n.classList.toggle("lit", c.path.indexOf(n.getAttribute("data-node")) !== -1);
-      });
-      verdict.innerHTML = "<b>"+c.title+"</b><div class='why'>"+c.why+"</div>";
-    });
-  });
-})();
-
-/* ============ IN PRACTICE : TABS ============ */
-(function practiceTabs(){
-  var btns = document.querySelectorAll(".tabs button");
-  var panes = document.querySelectorAll(".tabpane");
-  btns.forEach(function(b){
-    b.addEventListener("click", function(){
-      var t = b.getAttribute("data-tab");
-      btns.forEach(function(x){ x.classList.toggle("on", x === b); });
-      panes.forEach(function(p){ p.classList.toggle("on", p.getAttribute("data-pane") === t); });
-    });
-  });
-})();
-
-/* ============ WORKED BUILD : DOMAIN SLM STEPPER ============ */
-(function workedBuild(){
-  var steps = [
-    {
-      st:"Stage 02 · Step 1",
-      h:"Scope the domain — ruthlessly",
-      size:"140 <small>GB</small>", scope:"Everything", bar:100, runs:"Datacenter",
-      body:"Before any code, write down what the model must do — and what it may fail at. Narrow scope is not a limitation here, it's <em>the entire source of the shrink</em>.",
-      art:"<pre><b>MUST DO</b>\n  draft user stories from a feature brief\n  critique a PRD for missing acceptance criteria\n  turn a retro transcript into action items\n  size a backlog against a prioritisation frame\n\n<b>MAY FAIL AT</b>\n  writing code · legal advice · anything not PM</pre>",
-      got:"<b>Gotcha:</b> teams write the MUST DO list and skip the MAY FAIL AT list. The second list is what lets you drop parameters without guilt — and what your eval suite will later hold you to."
-    },
-    {
-      st:"Stage 02 · Step 2",
-      h:"Build the teaching set",
-      size:"140 <small>GB</small>", scope:"Everything", bar:100, runs:"Datacenter",
-      body:"Collect real prompts from your domain — a few thousand is a workable start. This is the slow, unglamorous step, and it is <em>the only part nobody can copy from you</em>.",
-      art:"<pre><i># sources that actually work</i>\n  your own archive of PRDs and specs\n  anonymised tickets and sprint retros\n  questions your PMs ask each other in chat\n  expert-written ideal answers for hard cases\n\n<b>~5,000–10,000 domain prompts</b></pre>",
-      got:"<b>This is the moat step.</b> Weights are free and public; a decade of your team's product judgment, written down as examples, is not. Everything else in this walkthrough is commodity work."
-    },
-    {
-      st:"Stage 02 · Step 3",
-      h:"Capture what the teacher does",
-      size:"140 <small>GB</small>", scope:"Everything", bar:100, runs:"Datacenter",
-      body:"Run every prompt through the big model and save its responses. If you can run the teacher yourself — open weights — save its <em>probability distributions</em> too, not just the final text. That's the soft-target signal that makes distillation far richer than plain imitation.",
-      art:"<pre>for prompt in domain_prompts:\n    out = teacher(prompt, return_logits=<b>True</b>)\n    save(prompt, out.text, out.logits)\n\n<i># logits need the weights in your hands.</i>\n<i># API-only teacher → text imitation instead.</i></pre>",
-      got:"<b>Access decides depth.</b> This is Stage 01 showing up as a hard constraint: closed teacher, shallower student."
-    },
-    {
-      st:"Stage 02 · Step 4",
-      h:"Pick a student base — don't start from scratch",
-      size:"6 <small>GB</small>", scope:"Everything, weakly", bar:100, runs:"Workstation",
-      body:"Take a small open base model — a few billion parameters. It already knows grammar, structure and reasoning basics. You're not teaching it language; you're teaching it <em>your domain's judgment</em>.",
-      art:"<pre>student  ≈ 3B parameters · FP16 · <b>~6 GB</b>\nteacher  ≈ 70B parameters · <b>~140 GB</b>\n\n<i># the drop is already 23× — before any training.</i>\n<i># it's currently mediocre at everything.</i></pre>",
-      got:"<b>Why not from scratch?</b> Pre-training costs millions and needs internet-scale data. Distillation is a transfer, not a birth."
-    },
-    {
-      st:"Stage 02 · Step 5",
-      h:"Train the student",
-      size:"6 <small>GB</small> <small>+ 40 MB adapter</small>", scope:"PM tasks", bar:9, runs:"Workstation",
-      body:"Train the student to match the teacher on your prompts — against the saved distributions where you have them. In practice most teams train a <em>LoRA adapter</em> rather than the full model: far cheaper, and the base stays reusable.",
-      art:"<pre><i># conceptually</i>\nloss = KL( student(prompt) ‖ teacher(prompt) )\n\n<i># practically, on one or two GPUs</i>\ntrl <b>GKDTrainer</b>  <i># distillation on soft targets</i>\npeft <b>LoRA</b>       <i># train ~40 MB, freeze the rest</i>\n\ndays, not weeks — for a domain this narrow</pre>",
-      got:"<b>Scope is what shrank it.</b> The student didn't get smarter than a 3B model; it stopped spending capacity on poetry, code and trivia. Inside PM tasks it can now track the teacher closely — outside them it's worse than before."
-    },
-    {
-      st:"Stage 02 · Step 6",
-      h:"Prove it actually learned",
-      size:"6 <small>GB</small> <small>+ 40 MB adapter</small>", scope:"PM tasks · verified", bar:9, runs:"Workstation",
-      body:"Hold back domain tasks the student never saw, and score them — against the teacher, and against your own experts. Without this you cannot tell whether it learned the <em>judgment</em> or merely the <em>phrasing</em>.",
-      art:"<pre><b>held-out PM eval · 400 tasks</b>\n\n  acceptance criteria completeness   82%\n  story splitting quality            79%\n  retro → action item accuracy       86%\n  <i>refusal on out-of-scope requests</i>   <i>94%</i>\n\nteacher on same set: 84% avg</pre>",
-      got:"<b>The step people skip and regret.</b> Note the last row — measuring what it <em>declines</em> to do matters as much as what it does. A narrow model that bluffs outside its scope is worse than no model."
-    },
-    {
-      st:"Stage 03 · Step 7",
-      h:"Quantize and ship it",
-      size:"1.8 <small>GB</small>", scope:"PM tasks · verified", bar:9, runs:"📱 Phone · Tab · Laptop",
-      body:"Merge the adapter into the base, convert, and compress to 4-bit. Hours of work, one machine, no data needed. Then it's a single file you bundle in the app — <em>offline, no API bill, nothing leaves the device</em>.",
-      art:"<pre>python convert_hf_to_gguf.py ./pm-student --outtype f16\nllama-quantize pm-f16.gguf <b>pm-Q4_K_M.gguf</b> Q4_K_M\n\n6 GB → <b>1.8 GB</b>\n\n<i># re-run the eval after quantizing.</i>\n<i># expect a small drop; confirm it's small.</i></pre>",
-      got:"<b>Done.</b> A datacenter-scale capability, narrowed to one domain and compressed to a file a PM can carry on a phone in a train tunnel. That's the whole cascade, in one build."
-    }
-  ];
-
-  var i = 0;
-  var card = document.getElementById("wbCard");
-  var dots = document.getElementById("wbDots");
-  var pos = document.getElementById("wbPos");
-  var elSize = document.getElementById("wbSize");
-  var elScope = document.getElementById("wbScope");
-  var elBar = document.getElementById("wbScopeBar");
-  var elRuns = document.getElementById("wbRuns");
-  var prev = document.getElementById("wbPrev");
-  var next = document.getElementById("wbNext");
-
-  steps.forEach(function(s, n){
-    var d = document.createElement("button");
-    d.className = "wb-dot";
-    d.textContent = n+1;
-    d.addEventListener("click", function(){ i = n; paint(); });
-    dots.appendChild(d);
-  });
-
-  function paint(){
-    var s = steps[i];
-    card.innerHTML = "<div class='st'>"+s.st+"</div><h4>"+s.h+"</h4>" +
-      "<div class='body'>"+s.body+"</div>" +
-      "<div class='wb-art'>"+s.art+"</div>" +
-      "<div class='wb-got'>"+s.got+"</div>";
-    elSize.innerHTML = s.size;
-    elScope.textContent = s.scope;
-    elBar.style.width = s.bar+"%";
-    elRuns.textContent = s.runs;
-    pos.textContent = "STEP "+(i+1)+" OF "+steps.length;
-    var kids = dots.children;
-    for(var n=0;n<kids.length;n++){
-      kids[n].className = "wb-dot" + (n===i ? " on" : (n<i ? " done" : ""));
-    }
-    prev.disabled = (i===0);
-    prev.style.opacity = i===0 ? ".4" : "1";
-    next.textContent = i===steps.length-1 ? "Start over" : "Next step →";
-  }
-  prev.addEventListener("click", function(){ if(i>0){ i--; paint(); } });
-  next.addEventListener("click", function(){ i = (i+1) % steps.length; paint(); });
-  paint();
-})();
-
-/* ============ COROLLARY : MOAT BUILDER ============ */
-(function moatBuilder(){
-  var state = { weights:false, data:false, evals:false };
-  var scores = { weights:5, data:60, evals:35 };
-  var opts = document.querySelectorAll(".moat-opt");
-  var pct = document.getElementById("moatPct");
-  var fill = document.getElementById("moatFill");
-  var say = document.getElementById("moatSay");
-
-  function verdict(){
-    var s = 0;
-    for(var k in state){ if(state[k]) s += scores[k]; }
-    pct.textContent = s+"%";
-    fill.style.width = s+"%";
-    if(!state.weights && !state.data && !state.evals){
-      say.innerHTML = "You own nothing yet. Start by grabbing the free weights — like everyone else.";
-    } else if(state.weights && !state.data && !state.evals){
-      say.innerHTML = "<b>Weights only: ~5%.</b> You own a file thousands of teams downloaded the same day. Same model, same capability, zero differentiation. This is a starting line, not a moat.";
-    } else if(state.data && !state.evals){
-      say.innerHTML = "<b>The moat appears.</b> A continuous loop capturing your experts' judgment as training data is the part that can't be downloaded, scraped, or copied. "+(state.weights?"The free weights are just the vessel it fills.":"It's worth more than the weights it will fine-tune.");
-    } else if(state.evals && !state.data){
-      say.innerHTML = "<b>Evals without data: measurement with nothing to measure.</b> A domain eval suite matters — but it compounds only when paired with the expert data loop it's meant to verify.";
-    } else if(state.data && state.evals){
-      say.innerHTML = "<b>"+(state.weights?"Full stack: ~100%.":"~95% — the durable part.")+"</b> Expert data loop + evals proving the model learned it. This pairing is the durable advantage: commodity weights in, specialized capability out, with proof. "+(state.weights?"":"Add the free weights and you're complete — notice they're the cheapest piece.");
-    }
-  }
-  opts.forEach(function(o){
-    o.addEventListener("click", function(){
-      var k = o.getAttribute("data-moat");
-      state[k] = !state[k];
-      o.classList.toggle("on", state[k]);
-      o.querySelector(".own").textContent = state[k] ? "OWNED" : "NOT OWNED";
-      verdict();
-    });
-  });
-})();
-
-/* ============ PWA : ICON + MANIFEST + SERVICE WORKER ============ */
-(function pwa(){
-  // canvas-generated icon
-  function makeIcon(size){
-    var c = document.createElement("canvas");
-    c.width = c.height = size;
-    var x = c.getContext("2d");
-    x.fillStyle = "#0A0A0C";
-    x.fillRect(0,0,size,size);
-    x.strokeStyle = "#D4AF6A";
-    x.lineWidth = size*0.028;
-    // descending flow chevrons
-    var cx = size/2;
-    for(var i=0;i<3;i++){
-      var y = size*(0.28 + i*0.18);
-      var w = size*(0.30 - i*0.06);
-      x.beginPath();
-      x.moveTo(cx-w, y);
-      x.lineTo(cx, y+size*0.10);
-      x.lineTo(cx+w, y);
-      x.stroke();
-    }
-    x.fillStyle = "#D4AF6A";
-    x.beginPath();
-    x.arc(cx, size*0.84, size*0.045, 0, Math.PI*2);
-    x.fill();
-    return c.toDataURL("image/png");
-  }
-  try{
-    var icon192 = makeIcon(192), icon512 = makeIcon(512);
-    var manifest = {
-      name:"CASCADE — AI Capability Flow",
-      short_name:"CASCADE",
-      start_url:".",
-      display:"standalone",
-      background_color:"#0A0A0C",
-      theme_color:"#0A0A0C",
-      icons:[
-        {src:icon192, sizes:"192x192", type:"image/png"},
-        {src:icon512, sizes:"512x512", type:"image/png"}
-      ]
-    };
-    var mBlob = new Blob([JSON.stringify(manifest)], {type:"application/json"});
-    var link = document.createElement("link");
-    link.rel = "manifest";
-    link.href = URL.createObjectURL(mBlob);
-    document.head.appendChild(link);
-    var apple = document.createElement("link");
-    apple.rel = "apple-touch-icon";
-    apple.href = icon192;
-    document.head.appendChild(apple);
-
-    if("serviceWorker" in navigator){
-      var swCode = "self.addEventListener('install',function(e){self.skipWaiting()});" +
-        "self.addEventListener('activate',function(e){e.waitUntil(clients.claim())});" +
-        "self.addEventListener('fetch',function(e){" +
-        "e.respondWith(caches.open('cascade-v1').then(function(c){" +
-        "return c.match(e.request).then(function(r){" +
-        "var f=fetch(e.request).then(function(n){if(e.request.method==='GET'&&n.ok){c.put(e.request,n.clone());}return n;}).catch(function(){return r;});" +
-        "return r||f;});}));});";
-      var swBlob = new Blob([swCode], {type:"text/javascript"});
-      navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(function(){});
-    }
-  }catch(e){ /* PWA extras are progressive enhancement */ }
-})();
-
-})();
+// ===================== INIT =====================
+initWeightDemo();
+switchTab('weights');
 </script>
 </body>
 </html>
