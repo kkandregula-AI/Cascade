@@ -1,610 +1,1236 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#0a0e17">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="description" content="Interactive guide: how AI capability flows from frontier labs to your devices">
-<title>AI Capability Flow</title>
-<style>
-:root{--bg-deep:#0a0e17;--bg-card:#111827;--bg-elevated:#1a2332;--border-subtle:#1f2937;--border-active:#374151;--text-primary:#f3f4f6;--text-secondary:#9ca3af;--text-muted:#6b7280;--accent-cyan:#22d3ee;--accent-purple:#a78bfa;--accent-amber:#fbbf24;--accent-emerald:#34d399;--accent-rose:#fb7185;--accent-orange:#fb923c;--accent-blue:#60a5fa;--accent-pink:#f472b6;--font-mono:'SF Mono','Fira Code','Cascadia Code',monospace;}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-body{background:var(--bg-deep);color:var(--text-primary);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
-.install-banner{position:fixed;top:0;left:0;right:0;background:linear-gradient(135deg,rgba(34,211,238,0.15),rgba(167,139,250,0.15));border-bottom:1px solid rgba(34,211,238,0.2);padding:12px 16px;display:none;align-items:center;justify-content:space-between;z-index:1000;backdrop-filter:blur(10px);}
-.install-banner.show{display:flex;}
-.install-text{font-size:13px;color:var(--text-secondary);}
-.install-text strong{color:var(--accent-cyan);}
-.install-btn{padding:6px 14px;border-radius:8px;border:1px solid var(--accent-cyan);background:rgba(34,211,238,0.15);color:var(--accent-cyan);font-size:12px;font-weight:600;cursor:pointer;margin-left:12px;}
-.install-close{background:none;border:none;color:var(--text-muted);font-size:18px;cursor:pointer;margin-left:8px;padding:0 4px;}
-.hero-section{padding:52px 20px 20px;text-align:center;position:relative;}
-.hero-title{font-size:24px;font-weight:800;margin-bottom:8px;background:linear-gradient(135deg,var(--accent-cyan),var(--accent-purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.hero-subtitle{font-size:13px;color:var(--text-muted);margin-bottom:28px;max-width:440px;margin-left:auto;margin-right:auto;line-height:1.5;}
-.flow-diagram{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;margin-bottom:24px;padding:0 8px;}
-.flow-node{padding:9px 14px;border-radius:10px;font-size:11px;font-weight:600;cursor:pointer;transition:all .3s ease;position:relative;border:1.5px solid transparent;white-space:nowrap;user-select:none;}
-.flow-node:hover{transform:translateY(-2px);}
-.flow-node.active{border-color:currentColor;box-shadow:0 0 20px currentColor;}
-.node-frontier{background:rgba(34,211,238,0.1);color:var(--accent-cyan);border-color:rgba(34,211,238,0.3);}
-.node-distill{background:rgba(167,139,250,0.1);color:var(--accent-purple);border-color:rgba(167,139,250,0.3);}
-.node-quant{background:rgba(251,146,60,0.1);color:var(--accent-orange);border-color:rgba(251,146,60,0.3);}
-.node-device{background:rgba(52,211,153,0.1);color:var(--accent-emerald);border-color:rgba(52,211,153,0.3);}
-.node-moe{background:rgba(96,165,250,0.1);color:var(--accent-blue);border-color:rgba(96,165,250,0.3);}
-.node-spec{background:rgba(244,114,182,0.1);color:var(--accent-pink);border-color:rgba(244,114,182,0.3);}
-.node-agent{background:rgba(251,191,36,0.1);color:var(--accent-amber);border-color:rgba(251,191,36,0.3);}
-.flow-arrow{color:var(--text-muted);font-size:13px;animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:.4;}50%{opacity:1;}}
-.tab-bar{display:flex;gap:2px;padding:0 12px;border-bottom:1px solid var(--border-subtle);overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
-.tab-bar::-webkit-scrollbar{display:none;}
-.tab-btn{padding:10px 14px;background:none;border:none;color:var(--text-muted);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;position:relative;transition:color .2s;border-bottom:2px solid transparent;margin-bottom:-1px;user-select:none;}
-.tab-btn:hover{color:var(--text-secondary);}
-.tab-btn.active{color:var(--text-primary);border-bottom-color:var(--accent-cyan);}
-.content-area{padding:24px 14px 60px;max-width:700px;margin:0 auto;}
-.section-title{font-size:19px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:10px;}
-.section-badge{font-size:9px;padding:3px 8px;border-radius:20px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
-.badge-concept{background:rgba(34,211,238,0.15);color:var(--accent-cyan);}
-.badge-demo{background:rgba(52,211,153,0.15);color:var(--accent-emerald);}
-.badge-new{background:rgba(96,165,250,0.15);color:var(--accent-blue);}
-.section-desc{color:var(--text-secondary);font-size:13.5px;line-height:1.6;margin-bottom:22px;}
-.card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:14px;padding:18px;margin-bottom:14px;transition:border-color .2s;}
-.card:hover{border-color:var(--border-active);}
-.card-title{font-size:14px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
-.card-body{font-size:13px;color:var(--text-secondary);line-height:1.65;}
-.card-body strong{color:var(--text-primary);}
-.card-body code{background:var(--bg-elevated);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:11.5px;color:var(--accent-cyan);}
-.demo-box{background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:12px;padding:18px;margin-top:14px;}
-.demo-controls{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
-.demo-btn{padding:7px 14px;border-radius:8px;border:1px solid var(--border-active);background:var(--bg-card);color:var(--text-primary);font-size:11.5px;font-weight:500;cursor:pointer;transition:all .2s;user-select:none;}
-.demo-btn:hover{background:var(--border-active);border-color:var(--text-muted);}
-.demo-btn.primary{background:rgba(34,211,238,0.15);border-color:rgba(34,211,238,0.4);color:var(--accent-cyan);}
-.demo-btn.primary:hover{background:rgba(34,211,238,0.25);}
-.demo-btn:disabled{opacity:.4;cursor:not-allowed;}
-.viz-canvas{width:100%;height:200px;background:var(--bg-deep);border-radius:10px;border:1px solid var(--border-subtle);position:relative;overflow:hidden;}
-.weight-grid{display:grid;grid-template-columns:repeat(20,1fr);gap:2px;padding:14px;}
-.weight-cell{aspect-ratio:1;border-radius:2px;transition:all .3s ease;cursor:pointer;}
-.weight-cell:hover{transform:scale(1.5);z-index:10;}
-.distill-container{display:flex;align-items:center;justify-content:space-between;padding:16px;gap:14px;}
-.model-box{flex:1;text-align:center;padding:14px;border-radius:10px;border:1px dashed var(--border-active);position:relative;}
-.model-box h4{font-size:12px;margin-bottom:8px;}
-.model-size-bar{height:7px;border-radius:4px;background:var(--bg-deep);margin-bottom:8px;overflow:hidden;}
-.model-size-fill{height:100%;border-radius:4px;transition:width .8s ease;}
-.model-params{font-size:10px;color:var(--text-muted);font-family:var(--font-mono);}
-.distill-arrow{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--accent-purple);}
-.distill-arrow span{font-size:10px;font-weight:600;white-space:nowrap;}
-.bit-visualizer{display:flex;flex-direction:column;gap:10px;padding:14px;}
-.bit-row{display:flex;align-items:center;gap:10px;}
-.bit-label{width:45px;font-size:11px;font-weight:600;font-family:var(--font-mono);color:var(--text-secondary);}
-.bit-blocks{flex:1;display:flex;gap:2px;flex-wrap:wrap;}
-.bit-block{width:12px;height:12px;border-radius:2px;transition:all .3s;}
-.bit-info{width:70px;font-size:10px;color:var(--text-muted);text-align:right;font-family:var(--font-mono);}
-.app-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px;}
-.app-item{padding:12px;border-radius:10px;border:1px solid var(--border-subtle);background:var(--bg-elevated);cursor:pointer;transition:all .2s;text-align:center;}
-.app-item:hover{border-color:var(--accent-emerald);background:rgba(52,211,153,0.05);}
-.app-item .app-icon{font-size:22px;margin-bottom:5px;}
-.app-item .app-name{font-size:11px;font-weight:600;color:var(--text-primary);}
-.app-item .app-meta{font-size:9px;color:var(--text-muted);margin-top:3px;}
-.compare-table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:10px;}
-.compare-table th,.compare-table td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--border-subtle);}
-.compare-table th{color:var(--text-muted);font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:.5px;}
-.compare-table td{color:var(--text-secondary);font-size:11px;}
-.compare-table tr:hover td{color:var(--text-primary);background:var(--bg-elevated);}
-.slider-container{margin:14px 0;}
-.slider-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:7px;}
-.slider-track{width:100%;height:6px;border-radius:3px;background:var(--border-subtle);position:relative;cursor:pointer;}
-.slider-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent-cyan),var(--accent-purple));transition:width .1s;}
-.slider-thumb{width:16px;height:16px;border-radius:50%;background:var(--text-primary);position:absolute;top:50%;transform:translate(-50%,-50%);box-shadow:0 2px 8px rgba(0,0,0,0.4);cursor:grab;transition:transform .1s;}
-.slider-thumb:active{transform:translate(-50%,-50%) scale(1.2);cursor:grabbing;}
-.mental-model{background:linear-gradient(135deg,rgba(34,211,238,0.05),rgba(167,139,250,0.05));border:1px solid rgba(34,211,238,0.2);border-radius:14px;padding:22px;margin-top:20px;}
-.mental-model h3{font-size:15px;margin-bottom:10px;color:var(--accent-cyan);}
-.mental-model p{font-size:13px;color:var(--text-secondary);line-height:1.7;}
-.flow-summary{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:14px;flex-wrap:wrap;font-size:11px;}
-.flow-summary .step{padding:5px 10px;border-radius:20px;background:var(--bg-elevated);border:1px solid var(--border-subtle);color:var(--text-secondary);}
-.flow-summary .arrow-sm{color:var(--text-muted);}
-.moe-viz{display:flex;flex-direction:column;gap:8px;padding:14px;}
-.moe-layer{display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg-deep);border-radius:8px;border:1px solid var(--border-subtle);}
-.moe-layer-label{width:60px;font-size:10px;color:var(--text-muted);font-family:var(--font-mono);}
-.moe-experts{flex:1;display:flex;gap:4px;}
-.moe-expert{flex:1;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;font-family:var(--font-mono);transition:all .3s ease;border:1px solid transparent;}
-.moe-expert.active{border-color:currentColor;box-shadow:0 0 12px currentColor;transform:scale(1.05);}
-.moe-expert.inactive{opacity:.25;}
-.moe-token{width:50px;text-align:center;font-size:11px;font-weight:600;color:var(--accent-cyan);font-family:var(--font-mono);}
-.spec-container{padding:14px;}
-.spec-timeline{display:flex;flex-direction:column;gap:6px;}
-.spec-step{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg-deep);border-radius:8px;border:1px solid var(--border-subtle);transition:all .3s;}
-.spec-step.active{border-color:var(--accent-pink);background:rgba(244,114,182,0.05);}
-.spec-step-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-family:var(--font-mono);background:var(--border-subtle);color:var(--text-muted);}
-.spec-step.active .spec-step-num{background:var(--accent-pink);color:var(--bg-deep);}
-.spec-step-desc{flex:1;font-size:12px;color:var(--text-secondary);}
-.spec-step-desc strong{color:var(--text-primary);}
-.spec-tokens{display:flex;gap:4px;}
-.spec-token{padding:4px 8px;border-radius:4px;font-size:11px;font-family:var(--font-mono);background:var(--bg-elevated);border:1px solid var(--border-subtle);transition:all .3s;}
-.spec-token.draft{color:var(--accent-pink);border-color:var(--accent-pink);}
-.spec-token.verified{color:var(--accent-emerald);border-color:var(--accent-emerald);background:rgba(52,211,153,0.1);}
-.spec-token.rejected{color:var(--accent-rose);border-color:var(--accent-rose);text-decoration:line-through;opacity:.5;}
-.agent-viz{padding:14px;}
-.agent-loop{display:flex;flex-direction:column;gap:8px;}
-.agent-step{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--bg-deep);border-radius:8px;border:1px solid var(--border-subtle);transition:all .4s ease;opacity:.4;}
-.agent-step.active{opacity:1;border-color:var(--accent-amber);background:rgba(251,191,36,0.05);}
-.agent-step-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;margin-top:2px;}
-.agent-step-content{flex:1;}
-.agent-step-title{font-size:12px;font-weight:600;color:var(--text-primary);margin-bottom:3px;}
-.agent-step-desc{font-size:11px;color:var(--text-muted);line-height:1.5;}
-.agent-arrow{text-align:center;color:var(--text-muted);font-size:14px;height:0;overflow:visible;position:relative;top:-4px;}
-.agent-tools{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
-.agent-tool{padding:4px 10px;border-radius:6px;font-size:10px;font-weight:500;background:var(--bg-elevated);border:1px solid var(--border-subtle);color:var(--text-secondary);transition:all .2s;}
-.agent-tool:hover{border-color:var(--accent-amber);color:var(--accent-amber);}
-.agent-tool.active{background:rgba(251,191,36,0.15);border-color:var(--accent-amber);color:var(--accent-amber);}
-.stats-bar{display:flex;gap:8px;margin-top:12px;}
-.stat-chip{flex:1;text-align:center;padding:10px;background:var(--bg-deep);border-radius:8px;border:1px solid var(--border-subtle);}
-.stat-value{font-size:16px;font-weight:700;font-family:var(--font-mono);}
-.stat-label{font-size:9px;color:var(--text-muted);margin-top:2px;text-transform:uppercase;letter-spacing:.5px;}
-.terminal{margin-top:12px;padding:12px;background:var(--bg-deep);border-radius:8px;font-size:11.5px;color:var(--text-secondary);font-family:var(--font-mono);line-height:1.6;min-height:50px;border:1px solid var(--border-subtle);}
-.terminal .ok{color:var(--accent-emerald);}
-.terminal .warn{color:var(--accent-amber);}
-.terminal .err{color:var(--accent-rose);}
-.terminal .info{color:var(--accent-cyan);}
-@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
-.fade-in{animation:fadeIn .4s ease forwards;}
-.hidden{display:none;}
-@media(max-width:480px){.app-grid{grid-template-columns:1fr;}.flow-diagram{gap:3px;}.flow-node{padding:7px 10px;font-size:10px;}.distill-container{flex-direction:column;}.distill-arrow{transform:rotate(90deg);margin:6px 0;}.hero-title{font-size:20px;}.moe-expert{height:30px;font-size:9px;}}
-::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:var(--bg-deep);}::-webkit-scrollbar-thumb{background:var(--border-active);border-radius:3px;}::-webkit-scrollbar-thumb:hover{background:var(--text-muted);}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Capability Flow — Interactive Guide</title>
+  <style>
+    :root {
+      --bg-deep: #0a0e17;
+      --bg-card: #111827;
+      --bg-elevated: #1a2332;
+      --border-subtle: #1f2937;
+      --border-active: #374151;
+      --text-primary: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      --accent-cyan: #22d3ee;
+      --accent-purple: #a78bfa;
+      --accent-amber: #fbbf24;
+      --accent-emerald: #34d399;
+      --accent-rose: #fb7185;
+      --accent-orange: #fb923c;
+      --font-mono: 'SF Mono', 'Fira Code', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      overflow-x: hidden;
+    }
+
+    .hero-section {
+      padding: 32px 20px 20px;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      max-width: 420px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.5;
+    }
+
+    .flow-diagram {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+      padding: 0 10px;
+    }
+
+    .flow-node {
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      border: 1.5px solid transparent;
+      white-space: nowrap;
+    }
+
+    .flow-node:hover { transform: translateY(-2px); }
+    .flow-node.active {
+      border-color: currentColor;
+      box-shadow: 0 0 20px currentColor;
+    }
+
+    .node-frontier {
+      background: rgba(34, 211, 238, 0.1);
+      color: var(--accent-cyan);
+      border-color: rgba(34, 211, 238, 0.3);
+    }
+
+    .node-distill {
+      background: rgba(167, 139, 250, 0.1);
+      color: var(--accent-purple);
+      border-color: rgba(167, 139, 250, 0.3);
+    }
+
+    .node-quant {
+      background: rgba(251, 146, 60, 0.1);
+      color: var(--accent-orange);
+      border-color: rgba(251, 146, 60, 0.3);
+    }
+
+    .node-device {
+      background: rgba(52, 211, 153, 0.1);
+      color: var(--accent-emerald);
+      border-color: rgba(52, 211, 153, 0.3);
+    }
+
+    .flow-arrow {
+      color: var(--text-muted);
+      font-size: 14px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    .tab-bar {
+      display: flex;
+      gap: 4px;
+      padding: 0 16px;
+      margin-bottom: 0;
+      border-bottom: 1px solid var(--border-subtle);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .tab-bar::-webkit-scrollbar { display: none; }
+
+    .tab-btn {
+      padding: 12px 18px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      position: relative;
+      transition: color 0.2s;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+    }
+
+    .tab-btn:hover { color: var(--text-secondary); }
+    .tab-btn.active {
+      color: var(--text-primary);
+      border-bottom-color: var(--accent-cyan);
+    }
+
+    .content-area {
+      padding: 24px 16px 40px;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-badge {
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-concept { background: rgba(34, 211, 238, 0.15); color: var(--accent-cyan); }
+    .badge-demo { background: rgba(52, 211, 153, 0.15); color: var(--accent-emerald); }
+
+    .section-desc {
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 16px;
+      transition: border-color 0.2s;
+    }
+
+    .card:hover { border-color: var(--border-active); }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-body {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    .card-body strong { color: var(--text-primary); }
+
+    .demo-box {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 16px;
+    }
+
+    .demo-controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .demo-btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border-active);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .demo-btn:hover {
+      background: var(--border-active);
+      border-color: var(--text-muted);
+    }
+
+    .demo-btn.primary {
+      background: rgba(34, 211, 238, 0.15);
+      border-color: rgba(34, 211, 238, 0.4);
+      color: var(--accent-cyan);
+    }
+
+    .demo-btn.primary:hover {
+      background: rgba(34, 211, 238, 0.25);
+    }
+
+    .viz-canvas {
+      width: 100%;
+      height: 220px;
+      background: var(--bg-deep);
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .viz-label {
+      position: absolute;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .weight-grid {
+      display: grid;
+      grid-template-columns: repeat(20, 1fr);
+      gap: 2px;
+      padding: 16px;
+    }
+
+    .weight-cell {
+      aspect-ratio: 1;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .weight-cell:hover { transform: scale(1.4); z-index: 10; }
+
+    .distill-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px;
+      gap: 16px;
+    }
+
+    .model-box {
+      flex: 1;
+      text-align: center;
+      padding: 16px;
+      border-radius: 10px;
+      border: 1px dashed var(--border-active);
+      position: relative;
+    }
+
+    .model-box h4 {
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .model-size-bar {
+      height: 8px;
+      border-radius: 4px;
+      background: var(--bg-deep);
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+
+    .model-size-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.8s ease;
+    }
+
+    .model-params {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .distill-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: var(--accent-purple);
+    }
+
+    .distill-arrow span {
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .bit-visualizer {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 16px;
+    }
+
+    .bit-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .bit-label {
+      width: 50px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+    }
+
+    .bit-blocks {
+      flex: 1;
+      display: flex;
+      gap: 3px;
+      flex-wrap: wrap;
+    }
+
+    .bit-block {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      transition: all 0.3s;
+    }
+
+    .bit-block.on { background: var(--accent-orange); }
+    .bit-block.off { background: var(--border-subtle); }
+
+    .bit-info {
+      width: 80px;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: right;
+      font-family: var(--font-mono);
+    }
+
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .app-item {
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-elevated);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .app-item:hover {
+      border-color: var(--accent-emerald);
+      background: rgba(52, 211, 153, 0.05);
+    }
+
+    .app-item .app-icon {
+      font-size: 24px;
+      margin-bottom: 6px;
+    }
+
+    .app-item .app-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .app-item .app-meta {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin-top: 12px;
+    }
+
+    .compare-table th,
+    .compare-table td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .compare-table th {
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .compare-table td {
+      color: var(--text-secondary);
+    }
+
+    .compare-table tr:hover td {
+      color: var(--text-primary);
+      background: var(--bg-elevated);
+    }
+
+    .slider-container {
+      margin: 16px 0;
+    }
+
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .slider-track {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--border-subtle);
+      position: relative;
+      cursor: pointer;
+    }
+
+    .slider-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+      transition: width 0.1s;
+    }
+
+    .slider-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--text-primary);
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      cursor: grab;
+      transition: transform 0.1s;
+    }
+
+    .slider-thumb:active { transform: translate(-50%, -50%) scale(1.2); cursor: grabbing; }
+
+    .mental-model {
+      background: linear-gradient(135deg, rgba(34, 211, 238, 0.05), rgba(167, 139, 250, 0.05));
+      border: 1px solid rgba(34, 211, 238, 0.2);
+      border-radius: 14px;
+      padding: 24px;
+      margin-top: 24px;
+    }
+
+    .mental-model h3 {
+      font-size: 16px;
+      margin-bottom: 12px;
+      color: var(--accent-cyan);
+    }
+
+    .mental-model p {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    .flow-summary {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+      font-size: 12px;
+    }
+
+    .flow-summary .step {
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+    }
+
+    .flow-summary .arrow-sm {
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 480px) {
+      .app-grid { grid-template-columns: 1fr; }
+      .flow-diagram { gap: 4px; }
+      .flow-node { padding: 8px 12px; font-size: 11px; }
+      .distill-container { flex-direction: column; }
+      .distill-arrow { transform: rotate(90deg); margin: 8px 0; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in { animation: fadeIn 0.4s ease forwards; }
+
+    .hidden { display: none; }
+  </style>
 </head>
 <body>
-<div class="install-banner" id="installBanner">
-<span class="install-text">📲 <strong>Install AI Capability Flow</strong> — works offline</span>
-<div><button class="install-btn" id="installBtn">Install</button><button class="install-close" onclick="hideInstallBanner()">×</button></div>
-</div>
-<div class="hero-section">
-<h1 class="hero-title">AI Capability Flow</h1>
-<p class="hero-subtitle">How frontier intelligence flows from research labs down to the devices in your pocket — and why it shapes every app you use.</p>
-<div class="flow-diagram">
-<div class="flow-node node-frontier" data-tab="weights" onclick="switchTab('weights')">🧠 Weights</div>
-<div class="flow-arrow">→</div>
-<div class="flow-node node-distill" data-tab="distillation" onclick="switchTab('distillation')">🔥 Distill</div>
-<div class="flow-arrow">→</div>
-<div class="flow-node node-quant" data-tab="quantization" onclick="switchTab('quantization')">⚡ Quant</div>
-<div class="flow-arrow">→</div>
-<div class="flow-node node-moe" data-tab="moe" onclick="switchTab('moe')">🧩 MoE</div>
-<div class="flow-arrow">→</div>
-<div class="flow-node node-spec" data-tab="speculative" onclick="switchTab('speculative')">🚀 SpecDec</div>
-<div class="flow-arrow">→</div>
-<div class="flow-node node-agent" data-tab="agents" onclick="switchTab('agents')">🤖 Agents</div>
-<div class="flow-arrow">→</div>
-<div class="flow-node node-device" data-tab="apps" onclick="switchTab('apps')">📱 Apps</div>
-</div>
-</div>
-<div class="tab-bar">
-<button class="tab-btn active" data-tab="weights" onclick="switchTab('weights')">Open/Closed</button>
-<button class="tab-btn" data-tab="distillation" onclick="switchTab('distillation')">Distillation</button>
-<button class="tab-btn" data-tab="quantization" onclick="switchTab('quantization')">Quantization</button>
-<button class="tab-btn" data-tab="moe" onclick="switchTab('moe')">MoE</button>
-<button class="tab-btn" data-tab="speculative" onclick="switchTab('speculative')">SpecDec</button>
-<button class="tab-btn" data-tab="agents" onclick="switchTab('agents')">Agents</button>
-<button class="tab-btn" data-tab="apps" onclick="switchTab('apps')">App Layer</button>
-</div>
-<div class="content-area">
+  <div class="app-container" id="app">
+    <div class="hero-section">
+      <h1 class="hero-title">AI Capability Flow</h1>
+      <p class="hero-subtitle">How frontier intelligence flows from research labs down to the devices in your pocket — and why it shapes every app you use.</p>
+      <div class="flow-diagram">
+        <div class="flow-node node-frontier" data-tab="weights" onclick="switchTab('weights')">🧠 Frontier Weights</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node node-distill" data-tab="distillation" onclick="switchTab('distillation')">🔥 Distillation</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node node-quant" data-tab="quantization" onclick="switchTab('quantization')">⚡ Quantization</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node node-device" data-tab="apps" onclick="switchTab('apps')">📱 Your Apps</div>
+      </div>
+    </div>
 
-<!-- TAB 1: Weights -->
-<div id="tab-weights" class="tab-content fade-in">
-<h2 class="section-title">Open vs Closed Weights <span class="section-badge badge-concept">Concept</span></h2>
-<p class="section-desc">Weights are the learned parameters of a neural network — billions of numbers that encode "knowledge." Whether they're <strong>open</strong> (downloadable) or <strong>closed</strong> (API-only) determines who can build on top of them.</p>
-<div class="card">
-<div class="card-title">🔓 Open Weights</div>
-<div class="card-body">Models like <strong>Llama, Mistral, Qwen</strong> release their weight files. Anyone can download, modify, fine-tune, or run them locally. This democratizes access but also means the model can be studied, red-teamed, or distilled by competitors.</div>
-</div>
-<div class="card">
-<div class="card-title">🔒 Closed Weights</div>
-<div class="card-body">Models like <strong>GPT-4, Claude, Gemini</strong> keep weights secret. You interact via API only. The provider controls inference, pricing, and safety filters. The model itself is a black box — you can't inspect or modify it.</div>
-</div>
-<div class="demo-box">
-<div class="card-title">🎮 Demo: Peek Inside the Weights</div>
-<p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Each colored square represents one weight value. Hover to inspect. Open models let you see and touch every single one.</p>
-<div class="demo-controls">
-<button class="demo-btn primary" onclick="regenerateWeights()">🎲 Randomize</button>
-<button class="demo-btn" onclick="toggleOpenClosed()">Toggle Open/Closed</button>
-</div>
-<div class="viz-canvas" id="weightViz">
-<div class="weight-grid" id="weightGrid"></div>
-<div id="weightOverlay" style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(0,0,0,0.4) 10px,rgba(0,0,0,0.4) 20px);display:none;align-items:center;justify-content:center;">
-<span style="background:var(--bg-card);padding:12px 20px;border-radius:8px;font-size:14px;font-weight:600;color:var(--accent-rose);border:1px solid var(--accent-rose);">🔒 CLOSED — Weights Hidden</span>
-</div>
-</div>
-<div style="display:flex;justify-content:space-between;margin-top:10px;font-size:11px;color:var(--text-muted);font-family:var(--font-mono);">
-<span id="weightCount">400 weights shown</span>
-<span id="weightStatus">🔓 Open — Full Access</span>
-</div>
-</div>
-<div class="card" style="margin-top:14px;">
-<div class="card-title">💡 Why It Matters</div>
-<div class="card-body"><strong>Open weights</strong> enable the entire downstream ecosystem: local LLMs, fine-tuned specialists, on-device inference, and distillation into smaller models. <strong>Closed weights</strong> fund frontier research through API revenue but create dependency on the provider's infrastructure.</div>
-</div>
-</div>
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="weights" onclick="switchTab('weights')">Open vs Closed</button>
+      <button class="tab-btn" data-tab="distillation" onclick="switchTab('distillation')">Distillation</button>
+      <button class="tab-btn" data-tab="quantization" onclick="switchTab('quantization')">Quantization</button>
+      <button class="tab-btn" data-tab="apps" onclick="switchTab('apps')">App Layer</button>
+    </div>
 
-<!-- TAB 2: Distillation -->
-<div id="tab-distillation" class="tab-content hidden">
-<h2 class="section-title">Knowledge Distillation <span class="section-badge badge-concept">Concept</span></h2>
-<p class="section-desc">A <strong>teacher model</strong> (large, capable, expensive) trains a <strong>student model</strong> (small, fast, cheap) by sharing not just final answers, but the full probability distribution — the "soft targets" that encode nuanced reasoning.</p>
-<div class="card">
-<div class="card-title">🎓 How It Works</div>
-<div class="card-body">Instead of training on raw data labels, the student learns to mimic the teacher's output probabilities. If the teacher says "cat: 0.7, dog: 0.2, fox: 0.1", the student learns that subtle distinction — capturing far more information than a hard label of just "cat."</div>
-</div>
-<div class="demo-box">
-<div class="card-title">🎮 Demo: Teacher → Student</div>
-<p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Adjust temperature and watch knowledge compress from teacher to student.</p>
-<div class="slider-container">
-<div class="slider-label"><span>Distillation Temperature</span><span id="tempValue">T = 2.0</span></div>
-<div class="slider-track" id="tempSlider" onclick="handleSliderClick(event,'temp')">
-<div class="slider-fill" id="tempFill" style="width:50%"></div>
-<div class="slider-thumb" id="tempThumb" style="left:50%"></div>
-</div>
-</div>
-<div class="distill-container">
-<div class="model-box">
-<h4 style="color:var(--accent-cyan)">🧠 Teacher</h4>
-<div class="model-size-bar"><div class="model-size-fill" id="teacherBar" style="width:100%;background:var(--accent-cyan)"></div></div>
-<div class="model-params" id="teacherParams">70B params</div>
-<div style="margin-top:8px;font-size:11px;color:var(--text-muted);">
-<div>Output: [0.65, 0.25, 0.08, 0.02]</div>
-<div style="margin-top:3px;">Rich, nuanced probs</div>
-</div>
-</div>
-<div class="distill-arrow"><span>DISTILL</span><span style="font-size:18px;">↓</span><span style="font-size:9px;color:var(--text-muted)">KL Loss</span></div>
-<div class="model-box">
-<h4 style="color:var(--accent-purple)">📚 Student</h4>
-<div class="model-size-bar"><div class="model-size-fill" id="studentBar" style="width:14%;background:var(--accent-purple)"></div></div>
-<div class="model-params" id="studentParams">7B params</div>
-<div style="margin-top:8px;font-size:11px;color:var(--text-muted);">
-<div id="studentOutput">Output: [0.62, 0.28, 0.07, 0.03]</div>
-<div style="margin-top:3px;" id="studentQuality">Quality: 94% match</div>
-</div>
-</div>
-</div>
-<div class="demo-controls" style="margin-top:14px;">
-<button class="demo-btn primary" onclick="runDistillation()">🔥 Run Distillation</button>
-<button class="demo-btn" onclick="resetDistill()">↺ Reset</button>
-</div>
-<div class="terminal" id="distillLog">> Ready to distill knowledge...</div>
-</div>
-<div class="card" style="margin-top:14px;">
-<div class="card-title">💡 Real-World Impact</div>
-<div class="card-body"><strong>DeepSeek-R1</strong> was distilled into variants (1.5B to 70B) rivaling GPT-4o on math and coding. <strong>Llama 3.1</strong> was distilled into tiny on-device models. Without distillation, capable AI would be trapped in data centers.</div>
-</div>
-</div>
+    <div class="content-area">
+      <div id="tab-weights" class="tab-content fade-in">
+        <h2 class="section-title">
+          Open vs Closed Weights
+          <span class="section-badge badge-concept">Concept</span>
+        </h2>
+        <p class="section-desc">
+          Weights are the learned parameters of a neural network — billions of numbers that encode "knowledge." 
+          Whether they're <strong>open</strong> (downloadable) or <strong>closed</strong> (API-only) determines who can build on top of them.
+        </p>
 
-<!-- TAB 3: Quantization -->
-<div id="tab-quantization" class="tab-content hidden">
-<h2 class="section-title">Quantization <span class="section-badge badge-concept">Concept</span></h2>
-<p class="section-desc">Quantization reduces the <strong>precision</strong> of weight values. A 32-bit float becomes 16-bit, 8-bit, or even 4-bit. Fewer bits = smaller file, faster inference, less memory — but potentially lower accuracy.</p>
-<div class="card">
-<div class="card-title">📊 The Precision Trade-off</div>
-<div class="card-body">
-<strong>FP32</strong> (32-bit): Full precision, huge files.<br>
-<strong>FP16/BF16</strong> (16-bit): Half precision, nearly identical quality, 2x smaller.<br>
-<strong>INT8</strong> (8-bit): 4x smaller, slight quality drop.<br>
-<strong>INT4</strong> (4-bit): 8x smaller, often acceptable quality loss.<br>
-<strong>1-bit</strong> (BitNet): Extreme compression, emerging research.
-</div>
-</div>
-<div class="demo-box">
-<div class="card-title">🎮 Demo: Bit Precision Visualizer</div>
-<p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Each block = one bit. See how the same weight is stored at different precision levels.</p>
-<div class="slider-container">
-<div class="slider-label"><span>Select Precision</span><span id="precisionLabel">FP32 (32-bit)</span></div>
-<div class="slider-track" id="precSlider" onclick="handleSliderClick(event,'prec')">
-<div class="slider-fill" id="precFill" style="width:100%"></div>
-<div class="slider-thumb" id="precThumb" style="left:100%"></div>
-</div>
-</div>
-<div class="bit-visualizer" id="bitVisualizer"></div>
-<div class="stats-bar">
-<div class="stat-chip"><div class="stat-value" id="sizeMetric" style="color:var(--accent-cyan)">100%</div><div class="stat-label">Relative Size</div></div>
-<div class="stat-chip"><div class="stat-value" id="speedMetric" style="color:var(--accent-emerald)">1.0x</div><div class="stat-label">Inference Speed</div></div>
-<div class="stat-chip"><div class="stat-value" id="qualityMetric" style="color:var(--accent-amber)">100%</div><div class="stat-label">Quality</div></div>
-</div>
-</div>
-<div class="card" style="margin-top:14px;">
-<div class="card-title">💡 Why Quantization Shapes the App Layer</div>
-<div class="card-body">A 70B model at FP32 needs <strong>280GB</strong> VRAM — impossible for consumer hardware. At INT4, it fits in <strong>35GB</strong>. At INT8, a 7B model fits on a <strong>phone</strong>. Quantization is the bridge that makes on-device AI feasible.</div>
-</div>
-</div>
+        <div class="card">
+          <div class="card-title">🔓 Open Weights</div>
+          <div class="card-body">
+            Models like <strong>Llama, Mistral, Qwen</strong> release their weight files. Anyone can download, modify, fine-tune, or run them locally. This democratizes access but also means the model can be studied, red-teamed, or distilled by competitors.
+          </div>
+        </div>
 
-<!-- TAB 4: MoE -->
-<div id="tab-moe" class="tab-content hidden">
-<h2 class="section-title">Mixture of Experts <span class="section-badge badge-new">New</span></h2>
-<p class="section-desc">MoE is a <strong>conditional computation</strong> architecture where only a subset of the model's parameters activate per token. A <strong>router</strong> learns which "expert" subnetworks to invoke for each input, enabling massive parameter counts without proportional compute cost.</p>
-<div class="card">
-<div class="card-title">🧩 The Core Idea</div>
-<div class="card-body">Traditional transformers use the same parameters for every token. MoE replaces dense feed-forward layers with <strong>sparse expert layers</strong> — multiple specialized networks where only top-k experts fire per token. DeepSeek-V3 (671B total, 37B active) and Mixtral 8x7B (8 experts, 2 active) are leading examples.</div>
-</div>
-<div class="demo-box">
-<div class="card-title">🎮 Demo: Router + Expert Selection</div>
-<p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Watch how different tokens route to different experts across layers. Only activated experts consume compute.</p>
-<div class="demo-controls">
-<button class="demo-btn primary" onclick="runMoE()">🎲 Route Next Token</button>
-<button class="demo-btn" onclick="resetMoE()">↺ Reset</button>
-</div>
-<div class="moe-viz" id="moeViz"></div>
-<div class="stats-bar" style="margin-top:10px;">
-<div class="stat-chip"><div class="stat-value" id="moeTotal" style="color:var(--accent-blue)">8</div><div class="stat-label">Total Experts</div></div>
-<div class="stat-chip"><div class="stat-value" id="moeActive" style="color:var(--accent-emerald)">2</div><div class="stat-label">Active / Token</div></div>
-<div class="stat-chip"><div class="stat-value" id="moeSparsity" style="color:var(--accent-amber)">25%</div><div class="stat-label">Active Params</div></div>
-</div>
-</div>
-<div class="card" style="margin-top:14px;">
-<div class="card-title">💡 Why MoE Changes the Economics</div>
-<div class="card-body">MoE lets models scale to <strong>trillions of parameters</strong> while keeping inference costs comparable to much smaller dense models. The catch: all experts must reside in memory, so VRAM requirements don't shrink — but <strong>compute per token does</strong>. This is why GPT-4, DeepSeek-V3, and Kimi K2 all use MoE.</div>
-</div>
-</div>
+        <div class="card">
+          <div class="card-title">🔒 Closed Weights</div>
+          <div class="card-body">
+            Models like <strong>GPT-4, Claude, Gemini</strong> keep weights secret. You interact via API only. The provider controls inference, pricing, and safety filters. The model itself is a black box — you can't inspect or modify it.
+          </div>
+        </div>
 
-<!-- TAB 5: Speculative Decoding -->
-<div id="tab-speculative" class="tab-content hidden">
-<h2 class="section-title">Speculative Decoding <span class="section-badge badge-new">New</span></h2>
-<p class="section-desc"><strong>Draft-then-verify</strong>: a small, fast "draft" model predicts several future tokens ahead. The large target model verifies them all in <strong>one parallel forward pass</strong>, accepting the matching prefix. This breaks the sequential token-by-token bottleneck, yielding <strong>2-4x speedups</strong> with zero quality loss.</p>
-<div class="card">
-<div class="card-title">🚀 How It Works</div>
-<div class="card-body">Autoregressive generation is inherently sequential — each token needs a full forward pass. Speculative decoding pairs a lightweight draft model with the target model. The draft model rapidly proposes 3-5 tokens; the target verifies them in parallel. Accepted tokens are emitted; the first mismatch is corrected and the cycle repeats.</div>
-</div>
-<div class="demo-box">
-<div class="card-title">🎮 Demo: Draft → Verify → Accept</div>
-<p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Watch the draft model propose tokens, then see which ones the target model accepts or rejects.</p>
-<div class="demo-controls">
-<button class="demo-btn primary" onclick="runSpeculative()">▶️ Generate Tokens</button>
-<button class="demo-btn" onclick="resetSpeculative()">↺ Reset</button>
-</div>
-<div class="spec-container">
-<div class="spec-timeline" id="specTimeline">
-<div class="spec-step active" id="specStep1">
-<div class="spec-step-num">1</div>
-<div class="spec-step-desc"><strong>Draft</strong> — Small model proposes 4 tokens quickly</div>
-<div class="spec-tokens" id="draftTokens"></div>
-</div>
-<div class="spec-step" id="specStep2">
-<div class="spec-step-num">2</div>
-<div class="spec-step-desc"><strong>Verify</strong> — Target model checks all in parallel</div>
-<div class="spec-tokens" id="verifyTokens"></div>
-</div>
-<div class="spec-step" id="specStep3">
-<div class="spec-step-num">3</div>
-<div class="spec-step-desc"><strong>Accept</strong> — Matching prefix emitted, rest regenerated</div>
-<div class="spec-tokens" id="acceptTokens"></div>
-</div>
-</div>
-</div>
-<div class="stats-bar" style="margin-top:10px;">
-<div class="stat-chip"><div class="stat-value" id="specSpeedup" style="color:var(--accent-pink)">1.0x</div><div class="stat-label">Speedup</div></div>
-<div class="stat-chip"><div class="stat-value" id="specAccepted" style="color:var(--accent-emerald)">0</div><div class="stat-label">Accepted</div></div>
-<div class="stat-chip"><div class="stat-value" id="specRejected" style="color:var(--accent-rose)">0</div><div class="stat-label">Rejected</div></div>
-</div>
-</div>
-<div class="card" style="margin-top:14px;">
-<div class="card-title">💡 The Zero-Quality-Loss Guarantee</div>
-<div class="card-body">Unlike quantization or pruning, speculative decoding is <strong>mathematically equivalent</strong> to running the target model alone. The draft model merely accelerates — it never changes the output distribution. This makes it the safest optimization technique for production deployments where quality cannot be compromised.</div>
-</div>
-</div>
+        <div class="demo-box">
+          <div class="card-title">🎮 Interactive Demo: Peek Inside the Weights</div>
+          <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">
+            Each colored square represents one weight value. Hover to inspect. Open models let you see and touch every single one.
+          </p>
+          <div class="demo-controls">
+            <button class="demo-btn primary" onclick="regenerateWeights()">🎲 Randomize Weights</button>
+            <button class="demo-btn" onclick="toggleOpenClosed()">Toggle Open/Closed</button>
+          </div>
+          <div class="viz-canvas" id="weightViz">
+            <div class="weight-grid" id="weightGrid"></div>
+            <div id="weightOverlay" style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(0,0,0,0.3) 10px,rgba(0,0,0,0.3) 20px);display:none;align-items:center;justify-content:center;">
+              <span style="background:var(--bg-card);padding:12px 20px;border-radius:8px;font-size:14px;font-weight:600;color:var(--accent-rose);border:1px solid var(--accent-rose);">🔒 CLOSED — Weights Hidden</span>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:11px;color:var(--text-muted);font-family:var(--font-mono);">
+            <span id="weightCount">400 weights shown</span>
+            <span id="weightStatus">🔓 Open — Full Access</span>
+          </div>
+        </div>
 
-<!-- TAB 6: Agents -->
-<div id="tab-agents" class="tab-content hidden">
-<h2 class="section-title">Agent Architecture <span class="section-badge badge-new">New</span></h2>
-<p class="section-desc">An AI agent is not "an LLM in a loop." It's a <strong>complete production architecture</strong> with six layers: reasoning engine, memory, tools, planner, runtime, and observability. The agent perceives, reasons, acts, and observes in a continuous loop until the goal is achieved.</p>
-<div class="card">
-<div class="card-title">🤖 The Six Layers</div>
-<div class="card-body">
-<strong>1. LLM Core</strong> — The reasoning brain (Claude, GPT, Llama).<br>
-<strong>2. Memory</strong> — Short-term (context), episodic (vector DB), procedural (learned heuristics).<br>
-<strong>3. Tools</strong> — External actions via MCP, APIs, code execution, browser automation.<br>
-<strong>4. Planner</strong> — ReAct, Plan-and-Execute, Tree-of-Thoughts, Reflexion.<br>
-<strong>5. Runtime</strong> — LangGraph, CrewAI, OpenAI Agents SDK — manages state, retries, handoffs.<br>
-<strong>6. Observability</strong> — Langfuse, LangSmith — every step traced and evaluable.
-</div>
-</div>
-<div class="demo-box">
-<div class="card-title">🎮 Demo: Agent Loop Simulation</div>
-<p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Watch a ReAct agent loop through perception → reasoning → action → observation to complete a task.</p>
-<div class="demo-controls">
-<button class="demo-btn primary" onclick="runAgent()">▶️ Run Agent Loop</button>
-<button class="demo-btn" onclick="resetAgent()">↺ Reset</button>
-</div>
-<div class="agent-viz">
-<div class="agent-loop" id="agentLoop">
-<div class="agent-step" id="agentStep1"><div class="agent-step-icon" style="background:rgba(34,211,238,0.15);">👁️</div><div class="agent-step-content"><div class="agent-step-title">Perceive</div><div class="agent-step-desc">Receive user goal and current environment state</div></div></div>
-<div class="agent-arrow">↓</div>
-<div class="agent-step" id="agentStep2"><div class="agent-step-icon" style="background:rgba(167,139,250,0.15);">🧠</div><div class="agent-step-content"><div class="agent-step-title">Reason</div><div class="agent-step-desc">LLM generates a thought: what action should I take next?</div></div></div>
-<div class="agent-arrow">↓</div>
-<div class="agent-step" id="agentStep3"><div class="agent-step-icon" style="background:rgba(251,146,60,0.15);">🔧</div><div class="agent-step-content"><div class="agent-step-title">Act</div><div class="agent-step-desc">Execute a tool call (search, calculator, API, code)</div></div></div>
-<div class="agent-arrow">↓</div>
-<div class="agent-step" id="agentStep4"><div class="agent-step-icon" style="background:rgba(52,211,153,0.15);">👁️</div><div class="agent-step-content"><div class="agent-step-title">Observe</div><div class="agent-step-desc">Read tool output, update memory, check if goal achieved</div></div></div>
-</div>
-<div class="agent-tools" id="agentTools">
-<div class="agent-tool">🔍 Web Search</div><div class="agent-tool">🧮 Calculator</div><div class="agent-tool">📅 Calendar</div>
-<div class="agent-tool">💻 Code Exec</div><div class="agent-tool">📧 Email</div><div class="agent-tool">🗄️ Database</div>
-</div>
-</div>
-<div class="terminal" id="agentLog">> Agent initialized. Waiting for task...</div>
-</div>
-<div class="card" style="margin-top:14px;">
-<div class="card-title">💡 From Chatbot to Agent</div>
-<div class="card-body">A <strong>chatbot</strong> reacts to questions. An <strong>agent</strong> realizes goals. "What's the weather?" → chatbot. "Find me a cheap hotel with a pool, check reviews, compare 3 options, and book" → agent. The difference is <strong>autonomous planning and tool use</strong> across multiple reasoning steps.</div>
-</div>
-</div>
+        <div class="card" style="margin-top:16px;">
+          <div class="card-title">💡 Why It Matters</div>
+          <div class="card-body">
+            <strong>Open weights</strong> enable the entire downstream ecosystem: local LLMs, fine-tuned specialists, on-device inference, and distillation into smaller models. <strong>Closed weights</strong> fund frontier research through API revenue but create a dependency on the provider's infrastructure and pricing.
+          </div>
+        </div>
+      </div>
 
-<!-- TAB 7: App Layer -->
-<div id="tab-apps" class="tab-content hidden">
-<h2 class="section-title">The Application Layer <span class="section-badge badge-concept">Concept</span></h2>
-<p class="section-desc">Everything upstream — weights, distillation, quantization, MoE, speculative decoding, agents — converges here. These decisions determine what apps can exist, where they run, who can build them, and what they cost.</p>
-<div class="card">
-<div class="card-title">🌍 The Capability Cascade</div>
-<div class="card-body"><strong>Frontier Lab</strong> trains massive model → <strong>Open weights</strong> democratize access → <strong>Distillation</strong> creates efficient variants → <strong>MoE</strong> scales parameters without compute → <strong>Quantization</strong> shrinks for devices → <strong>SpecDec</strong> speeds inference → <strong>Agents</strong> add reasoning → <strong>Developers</strong> build previously impossible apps.</div>
-</div>
-<div class="demo-box">
-<div class="card-title">🎮 Demo: App Feasibility Simulator</div>
-<p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Adjust sliders to see how the full pipeline determines what AI app is possible.</p>
-<div style="display:flex;flex-direction:column;gap:14px;">
-<div class="slider-container">
-<div class="slider-label"><span>🔓 Weight Access</span><span id="accessLabel">Open Weights</span></div>
-<div class="slider-track" id="accessSlider" onclick="handleSliderClick(event,'access')">
-<div class="slider-fill" id="accessFill" style="width:100%;background:linear-gradient(90deg,var(--accent-cyan),var(--accent-purple))"></div>
-<div class="slider-thumb" id="accessThumb" style="left:100%"></div>
-</div>
-</div>
-<div class="slider-container">
-<div class="slider-label"><span>🔥 Distillation</span><span id="distillLabel">Fully Distilled (7B)</span></div>
-<div class="slider-track" id="distillSlider" onclick="handleSliderClick(event,'distill')">
-<div class="slider-fill" id="distillFill" style="width:50%;background:linear-gradient(90deg,var(--accent-purple),var(--accent-orange))"></div>
-<div class="slider-thumb" id="distillThumb" style="left:50%"></div>
-</div>
-</div>
-<div class="slider-container">
-<div class="slider-label"><span>🧩 MoE Sparsity</span><span id="moeLabel">Dense Model</span></div>
-<div class="slider-track" id="moeSlider" onclick="handleSliderClick(event,'moe')">
-<div class="slider-fill" id="moeFill" style="width:0%;background:linear-gradient(90deg,var(--accent-blue),var(--accent-cyan))"></div>
-<div class="slider-thumb" id="moeThumb" style="left:0%"></div>
-</div>
-</div>
-<div class="slider-container">
-<div class="slider-label"><span>⚡ Quantization</span><span id="quantLabel">INT4 (4-bit)</span></div>
-<div class="slider-track" id="quantSlider" onclick="handleSliderClick(event,'quant')">
-<div class="slider-fill" id="quantFill" style="width:25%;background:linear-gradient(90deg,var(--accent-orange),var(--accent-emerald))"></div>
-<div class="slider-thumb" id="quantThumb" style="left:25%"></div>
-</div>
-</div>
-<div class="slider-container">
-<div class="slider-label"><span>🚀 Speculative Decoding</span><span id="specLabel">Disabled</span></div>
-<div class="slider-track" id="specAppSlider" onclick="handleSliderClick(event,'specApp')">
-<div class="slider-fill" id="specAppFill" style="width:0%;background:linear-gradient(90deg,var(--accent-pink),var(--accent-purple))"></div>
-<div class="slider-thumb" id="specAppThumb" style="left:0%"></div>
-</div>
-</div>
-<div class="slider-container">
-<div class="slider-label"><span>🤖 Agent Layer</span><span id="agentLabel">No Agent</span></div>
-<div class="slider-track" id="agentAppSlider" onclick="handleSliderClick(event,'agentApp')">
-<div class="slider-fill" id="agentAppFill" style="width:0%;background:linear-gradient(90deg,var(--accent-amber),var(--accent-emerald))"></div>
-<div class="slider-thumb" id="agentAppThumb" style="left:0%"></div>
-</div>
-</div>
-</div>
-<div style="margin-top:18px;padding:16px;background:var(--bg-deep);border-radius:10px;border:1px solid var(--border-subtle);">
-<div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;">Resulting Capability</div>
-<div id="appResult" style="font-size:16px;font-weight:700;color:var(--accent-emerald);margin-bottom:4px;">✅ On-Device Personal Assistant</div>
-<div id="appResultDesc" style="font-size:12px;color:var(--text-secondary);line-height:1.5;">Runs entirely offline on a modern smartphone. No API costs, no latency, full privacy.</div>
-<div style="margin-top:12px;display:flex;gap:12px;font-size:11px;font-family:var(--font-mono);color:var(--text-muted);flex-wrap:wrap;">
-<span id="resultSize">~4GB model</span><span>•</span><span id="resultSpeed">~15 tok/s</span><span>•</span><span id="resultCost">$0 inference</span><span>•</span><span id="resultAgent">No autonomy</span>
-</div>
-</div>
-<div class="app-grid" style="margin-top:14px;">
-<div class="app-item" id="app1"><div class="app-icon">💬</div><div class="app-name">Local Chat</div><div class="app-meta">Privacy-first</div></div>
-<div class="app-item" id="app2"><div class="app-icon">📝</div><div class="app-name">Doc Assistant</div><div class="app-meta">Offline RAG</div></div>
-<div class="app-item" id="app3"><div class="app-icon">🎨</div><div class="app-name">Image Caption</div><div class="app-meta">Vision + LLM</div></div>
-<div class="app-item" id="app4"><div class="app-icon">🔧</div><div class="app-name">Code Helper</div><div class="app-meta">On-device IDE</div></div>
-</div>
-</div>
-<div class="card" style="margin-top:14px;">
-<div class="card-title">📋 How the Pipeline Shapes What's Possible</div>
-<table class="compare-table">
-<thead><tr><th>Stage</th><th>What Changes</th><th>App Impact</th></tr></thead>
-<tbody>
-<tr><td><strong style="color:var(--accent-cyan)">Open Weights</strong></td><td>Anyone can download & modify</td><td>Self-hosted apps, fine-tuned specialists, no vendor lock-in</td></tr>
-<tr><td><strong style="color:var(--accent-purple)">Distillation</strong></td><td>Large → Small with preserved skill</td><td>Affordable inference, edge deployment, real-time apps</td></tr>
-<tr><td><strong style="color:var(--accent-blue)">MoE</strong></td><td>Massive params, sparse compute</td><td>Frontier quality at mid-size cost, scalable serving</td></tr>
-<tr><td><strong style="color:var(--accent-orange)">Quantization</strong></td><td>32-bit → 4-bit precision</td><td>Phone apps, IoT devices, 8x cost reduction</td></tr>
-<tr><td><strong style="color:var(--accent-pink)">SpecDec</strong></td><td>Parallel token verification</td><td>2-4x faster UX, lower latency for interactive apps</td></tr>
-<tr><td><strong style="color:var(--accent-amber)">Agents</strong></td><td>Autonomous reasoning loops</td><td>Task-completion apps: booking, research, coding</td></tr>
-<tr><td><strong style="color:var(--accent-emerald)">App Layer</strong></td><td>All combined</td><td>New categories: private AI, offline agents, $0 assistants</td></tr>
-</tbody>
-</table>
-</div>
-<div class="mental-model">
-<h3>🧠 The Single Mental Model</h3>
-<p>Think of AI capability as <strong>water flowing downhill</strong>. Frontier labs are the mountain spring. <strong>Open weights</strong> unlock the reservoir gates. <strong>Distillation</strong> builds aqueducts to direct flow. <strong>MoE</strong> creates multiple channels so more water moves without widening the riverbed. <strong>Quantization</strong> filters and compresses the flow for the smallest villages. <strong>SpecDec</strong> adds pressure pumps for speed. <strong>Agents</strong> are the irrigation systems that decide where the water goes. The <strong>app layer</strong> is what grows in the valley — entirely dependent on whether the water reaches it.</p>
-<div class="flow-summary">
-<span class="step" style="color:var(--accent-cyan)">🧠 Lab</span>
-<span class="arrow-sm">→</span>
-<span class="step" style="color:var(--accent-cyan)">🔓 Open</span>
-<span class="arrow-sm">→</span>
-<span class="step" style="color:var(--accent-purple)">🔥 Distill</span>
-<span class="arrow-sm">→</span>
-<span class="step" style="color:var(--accent-blue)">🧩 MoE</span>
-<span class="arrow-sm">→</span>
-<span class="step" style="color:var(--accent-orange)">⚡ Quant</span>
-<span class="arrow-sm">→</span>
-<span class="step" style="color:var(--accent-pink)">🚀 SpecDec</span>
-<span class="arrow-sm">→</span>
-<span class="step" style="color:var(--accent-amber)">🤖 Agent</span>
-<span class="arrow-sm">→</span>
-<span class="step" style="color:var(--accent-emerald)">📱 App</span>
-</div>
-</div>
-</div>
-</div>
-<script>
-// ===================== PWA INSTALL =====================
-let deferredPrompt=null;
-const installBanner=document.getElementById('installBanner');
-const installBtn=document.getElementById('installBtn');
+      <div id="tab-distillation" class="tab-content hidden">
+        <h2 class="section-title">
+          Knowledge Distillation
+          <span class="section-badge badge-concept">Concept</span>
+        </h2>
+        <p class="section-desc">
+          A <strong>teacher model</strong> (large, capable, expensive) trains a <strong>student model</strong> (small, fast, cheap) 
+          by sharing not just final answers, but the full probability distribution — the "soft targets" that encode nuanced reasoning.
+        </p>
 
-window.addEventListener('beforeinstallprompt',(e)=>{e.preventDefault();deferredPrompt=e;installBanner.classList.add('show');});
-installBtn.addEventListener('click',async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();const{outcome}=await deferredPrompt.userChoice;if(outcome==='accepted')installBanner.classList.remove('show');deferredPrompt=null;});
-function hideInstallBanner(){installBanner.classList.remove('show');}
+        <div class="card">
+          <div class="card-title">🎓 How It Works</div>
+          <div class="card-body">
+            Instead of training on raw data labels, the student learns to mimic the teacher's output probabilities. 
+            If the teacher says "cat: 0.7, dog: 0.2, fox: 0.1", the student learns that subtle distinction — 
+            capturing far more information than a hard label of just "cat."
+          </div>
+        </div>
 
-// Register inline Service Worker
-const swCode=`self.addEventListener('install',e=>{self.skipWaiting();});self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim());});self.addEventListener('fetch',e=>{e.respondWith(fetch(e.request).catch(()=>new Response('<h1 style="color:#f3f4f6;background:#0a0e17;padding:40px;font-family:sans-serif;">Offline</h1>',{headers:{'Content-Type':'text/html'}})));});`;
-if('serviceWorker'in navigator){const blob=new Blob([swCode],{type:'application/javascript'});navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});}
+        <div class="demo-box">
+          <div class="card-title">🎮 Interactive Demo: Teacher → Student</div>
+          <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">
+            Watch how a large teacher model's "soft" knowledge gets compressed into a smaller student. Adjust the distillation temperature.
+          </p>
 
-// ===================== STATE =====================
-let currentTab='weights',weightsOpen=true,tempValue=2.0,precisionLevel=4,distillProgress=0;
-let appState={access:1.0,distill:0.5,moe:0.0,quant:0.25,spec:0.0,agent:0.0};
+          <div class="slider-container">
+            <div class="slider-label">
+              <span>Distillation Temperature</span>
+              <span id="tempValue">T = 2.0</span>
+            </div>
+            <div class="slider-track" id="tempSlider" onclick="handleSliderClick(event, 'temp')">
+              <div class="slider-fill" id="tempFill" style="width:50%"></div>
+              <div class="slider-thumb" id="tempThumb" style="left:50%"></div>
+            </div>
+          </div>
 
-// ===================== TAB SWITCHING =====================
-function switchTab(tab){currentTab=tab;document.querySelectorAll('.tab-content').forEach(el=>{el.classList.add('hidden');el.classList.remove('fade-in');});document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.remove('active'));document.querySelectorAll('.flow-node').forEach(node=>node.classList.remove('active'));const content=document.getElementById('tab-'+tab);if(content){content.classList.remove('hidden');content.classList.add('fade-in');}const tabBtn=document.querySelector('.tab-btn[data-tab="'+tab+'"]');if(tabBtn)tabBtn.classList.add('active');const flowNode=document.querySelector('.flow-node[data-tab="'+tab+'"]');if(flowNode)flowNode.classList.add('active');if(tab==='weights')initWeightDemo();if(tab==='quantization')initBitDemo();if(tab==='moe')initMoE();if(tab==='speculative')initSpeculative();if(tab==='apps')updateAppSimulator();}
+          <div class="distill-container">
+            <div class="model-box">
+              <h4 style="color:var(--accent-cyan)">🧠 Teacher</h4>
+              <div class="model-size-bar"><div class="model-size-fill" id="teacherBar" style="width:100%;background:var(--accent-cyan)"></div></div>
+              <div class="model-params" id="teacherParams">70B parameters</div>
+              <div style="margin-top:10px;font-size:11px;color:var(--text-muted);">
+                <div>Output: [0.65, 0.25, 0.08, 0.02]</div>
+                <div style="margin-top:4px;">Rich, nuanced probabilities</div>
+              </div>
+            </div>
 
-// ===================== WEIGHTS DEMO =====================
-function initWeightDemo(){const grid=document.getElementById('weightGrid');if(!grid)return;grid.innerHTML='';for(let i=0;i<400;i++){const cell=document.createElement('div');cell.className='weight-cell';const hue=Math.random()*60+180;const lightness=30+Math.random()*40;cell.style.background='hsl('+hue+',70%,'+lightness+'%)';cell.title='Weight '+i+': '+(Math.random()*2-1).toFixed(6);grid.appendChild(cell);}}
-function regenerateWeights(){initWeightDemo();}
-function toggleOpenClosed(){weightsOpen=!weightsOpen;const overlay=document.getElementById('weightOverlay');const status=document.getElementById('weightStatus');if(!overlay||!status)return;if(weightsOpen){overlay.style.display='none';status.textContent='🔓 Open — Full Access';status.style.color='var(--accent-emerald)';}else{overlay.style.display='flex';status.textContent='🔒 Closed — API Only';status.style.color='var(--accent-rose)';}}
+            <div class="distill-arrow">
+              <span>DISTILL</span>
+              <span style="font-size:20px;">↓</span>
+              <span id="distillLoss" style="font-size:10px;color:var(--text-muted)">KL Loss</span>
+            </div>
 
-// ===================== SLIDER HANDLER =====================
-function handleSliderClick(e,type){const track=e.currentTarget;const rect=track.getBoundingClientRect();const x=e.clientX-rect.left;const pct=Math.max(0,Math.min(1,x/rect.width));if(type==='temp'){tempValue=0.5+pct*4.5;const tv=document.getElementById('tempValue');if(tv)tv.textContent='T = '+tempValue.toFixed(1);const tf=document.getElementById('tempFill');if(tf)tf.style.width=(pct*100)+'%';const tt=document.getElementById('tempThumb');if(tt)tt.style.left=(pct*100)+'%';updateStudentOutput();}else if(type==='prec'){precisionLevel=Math.round(pct*4);updatePrecisionDemo();}else if(type==='access'){appState.access=pct;updateAppSimulator();}else if(type==='distill'){appState.distill=pct;updateAppSimulator();}else if(type==='moe'){appState.moe=pct;updateAppSimulator();}else if(type==='quant'){appState.quant=pct;updateAppSimulator();}else if(type==='specApp'){appState.spec=pct;updateAppSimulator();}else if(type==='agentApp'){appState.agent=pct;updateAppSimulator();}}
+            <div class="model-box">
+              <h4 style="color:var(--accent-purple)">📚 Student</h4>
+              <div class="model-size-bar"><div class="model-size-fill" id="studentBar" style="width:14%;background:var(--accent-purple)"></div></div>
+              <div class="model-params" id="studentParams">7B parameters</div>
+              <div style="margin-top:10px;font-size:11px;color:var(--text-muted);">
+                <div id="studentOutput">Output: [0.62, 0.28, 0.07, 0.03]</div>
+                <div style="margin-top:4px;" id="studentQuality">Quality: 94% match</div>
+              </div>
+            </div>
+          </div>
 
-// ===================== DISTILLATION DEMO =====================
-function updateStudentOutput(){const quality=Math.max(0.5,1-Math.abs(tempValue-2.0)*0.15);const match=Math.round(quality*100);const sq=document.getElementById('studentQuality');if(sq)sq.textContent='Quality: '+match+'% match';const base=[0.65,0.25,0.08,0.02];const noise=(tempValue-2.0)*0.03;const out=base.map(v=>Math.max(0,v+(Math.random()-0.5)*noise*2));const sum=out.reduce((a,b)=>a+b,0);const normalized=out.map(v=>(v/sum).toFixed(2));const so=document.getElementById('studentOutput');if(so)so.textContent='Output: ['+normalized.join(', ')+']';}
-function runDistillation(){const log=document.getElementById('distillLog');if(!log)return;const steps=['<span class="info">> Loading teacher model (70B params)...</span>','<span class="info">> Loading student architecture (7B params)...</span>','<span class="info">> Computing soft targets with T='+tempValue.toFixed(1)+'...</span>','<span class="warn">> Backpropagating KL divergence loss...</span>','<span class="ok">> Step '+(Math.round(distillProgress*100+10))+'/1000: Loss = '+(2.5-distillProgress*2).toFixed(4)+'</span>','<span class="ok">> Student accuracy improving...</span>','<span class="ok">> ✅ Distillation complete! Student achieves 94% teacher quality.</span>'];let i=0;log.innerHTML='';const interval=setInterval(()=>{if(i>=steps.length){clearInterval(interval);distillProgress=Math.min(1,distillProgress+0.1);const sb=document.getElementById('studentBar');if(sb)sb.style.width=(14+distillProgress*10)+'%';return;}log.innerHTML+=steps[i]+'<br>';i++;},280);}
-function resetDistill(){distillProgress=0;const sb=document.getElementById('studentBar');if(sb)sb.style.width='14%';const log=document.getElementById('distillLog');if(log)log.innerHTML='> Ready to distill knowledge...';updateStudentOutput();}
+          <div class="demo-controls" style="margin-top:16px;">
+            <button class="demo-btn primary" onclick="runDistillation()">🔥 Run Distillation Step</button>
+            <button class="demo-btn" onclick="resetDistill()">↺ Reset</button>
+          </div>
 
-// ===================== QUANTIZATION DEMO =====================
-const precisionConfigs=[{name:'1-bit (BitNet)',bits:1,size:3,speed:8.0,quality:65,color:'#ef4444'},{name:'INT4 (4-bit)',bits:4,size:12,speed:4.5,quality:88,color:'#f97316'},{name:'INT8 (8-bit)',bits:8,size:25,speed:2.8,quality:96,color:'#fbbf24'},{name:'FP16 (16-bit)',bits:16,size:50,speed:1.5,quality:99,color:'#22d3ee'},{name:'FP32 (32-bit)',bits:32,size:100,speed:1.0,quality:100,color:'#a78bfa'}];
-function initBitDemo(){updatePrecisionDemo();}
-function updatePrecisionDemo(){const config=precisionConfigs[precisionLevel];const pct=precisionLevel/4;const pl=document.getElementById('precisionLabel');if(pl)pl.textContent=config.name;const pf=document.getElementById('precFill');if(pf)pf.style.width=(pct*100)+'%';const pt=document.getElementById('precThumb');if(pt)pt.style.left=(pct*100)+'%';const sm=document.getElementById('sizeMetric');if(sm){sm.textContent=config.size+'%';sm.style.color=config.color;}const spm=document.getElementById('speedMetric');if(spm)spm.textContent=config.speed+'x';const qm=document.getElementById('qualityMetric');if(qm)qm.textContent=config.quality+'%';const container=document.getElementById('bitVisualizer');if(!container)return;container.innerHTML='';precisionConfigs.forEach((pc,idx)=>{const row=document.createElement('div');row.className='bit-row';const label=document.createElement('div');label.className='bit-label';label.textContent=pc.bits+'-bit';label.style.color=idx===precisionLevel?config.color:'var(--text-muted)';const blocks=document.createElement('div');blocks.className='bit-blocks';const numBlocks=Math.min(32,pc.bits);for(let b=0;b<numBlocks;b++){const block=document.createElement('div');block.className='bit-block';if(idx===precisionLevel){block.style.background=config.color;block.style.boxShadow='0 0 6px '+config.color+'40';}else{block.style.background='var(--border-subtle)';}blocks.appendChild(block);}const info=document.createElement('div');info.className='bit-info';info.textContent=pc.size+'% size';row.appendChild(label);row.appendChild(blocks);row.appendChild(info);container.appendChild(row);});}
+          <div style="margin-top:12px;padding:12px;background:var(--bg-deep);border-radius:8px;font-size:12px;color:var(--text-secondary);font-family:var(--font-mono);">
+            <div id="distillLog" style="min-height:40px;">> Ready to distill knowledge...</div>
+          </div>
+        </div>
 
-// ===================== MOE DEMO =====================
-const expertColors=['#22d3ee','#a78bfa','#fbbf24','#34d399','#fb923c','#f472b6','#60a5fa','#fb7185'];
-const expertNames=['Math','Code','Lang','Logic','Facts','Creative','Vision','Audio'];
-let moeStep=0;
-const sampleTokens=['calculate','def','the','if','Paris','poem','image','sound'];
-function initMoE(){renderMoE(-1);}
-function renderMoE(activeTokenIdx){const viz=document.getElementById('moeViz');if(!viz)return;viz.innerHTML='';for(let layer=0;layer<3;layer++){const row=document.createElement('div');row.className='moe-layer';const label=document.createElement('div');label.className='moe-layer-label';label.textContent='Layer '+(layer+1);const expertsDiv=document.createElement('div');expertsDiv.className='moe-experts';const token=activeTokenIdx>=0?sampleTokens[activeTokenIdx%sampleTokens.length]:'';const hash=token.split('').reduce((a,c)=>a+c.charCodeAt(0),0);const active1=hash%8;const active2=(hash*3+5)%8;for(let e=0;e<8;e++){const expert=document.createElement('div');expert.className='moe-expert';expert.style.background=expertColors[e]+'20';expert.style.color=expertColors[e];expert.style.borderColor=expertColors[e]+'40';expert.textContent=expertNames[e];if(activeTokenIdx>=0&&(e===active1||e===active2))expert.classList.add('active');else if(activeTokenIdx>=0)expert.classList.add('inactive');expertsDiv.appendChild(expert);}const tokenDiv=document.createElement('div');tokenDiv.className='moe-token';tokenDiv.textContent=activeTokenIdx>=0?'"'+token+'"':'...';row.appendChild(label);row.appendChild(expertsDiv);row.appendChild(tokenDiv);viz.appendChild(row);}}
-function runMoE(){moeStep=(moeStep+1)%sampleTokens.length;renderMoE(moeStep);}
-function resetMoE(){moeStep=-1;renderMoE(-1);}
+        <div class="card" style="margin-top:16px;">
+          <div class="card-title">💡 Real-World Impact</div>
+          <div class="card-body">
+            <strong>DeepSeek-R1</strong> was distilled from a large reasoning model into smaller variants (1.5B to 70B) that rival GPT-4o on math and coding. <strong>Llama 3.1</strong> was distilled into tiny on-device models. Without distillation, capable AI would be trapped in data centers.
+          </div>
+        </div>
+      </div>
 
-// ===================== SPECULATIVE DECODING DEMO =====================
-const sampleWords=['The','quick','brown','fox','jumps','over','the','lazy','dog','and','runs','fast'];
-let specStep=0,totalAccepted=0,totalRejected=0;
-function initSpeculative(){specStep=0;totalAccepted=0;totalRejected=0;updateSpecStats();const dt=document.getElementById('draftTokens');if(dt)dt.innerHTML='';const vt=document.getElementById('verifyTokens');if(vt)vt.innerHTML='';const at=document.getElementById('acceptTokens');if(at)at.innerHTML='';['specStep1','specStep2','specStep3'].forEach((id,i)=>{const el=document.getElementById(id);if(el)el.classList.toggle('active',i===0);});}
-function runSpeculative(){const draftContainer=document.getElementById('draftTokens');const verifyContainer=document.getElementById('verifyTokens');const acceptContainer=document.getElementById('acceptTokens');if(!draftContainer||!verifyContainer||!acceptContainer)return;document.getElementById('specStep1').classList.add('active');document.getElementById('specStep2').classList.remove('active');document.getElementById('specStep3').classList.remove('active');const draftCount=3+Math.floor(Math.random()*3);const draftTokens=[];draftContainer.innerHTML='';for(let i=0;i<draftCount;i++){const word=sampleWords[(specStep+i)%sampleWords.length];draftTokens.push(word);const span=document.createElement('span');span.className='spec-token draft';span.textContent=word;draftContainer.appendChild(span);}setTimeout(()=>{document.getElementById('specStep1').classList.remove('active');document.getElementById('specStep2').classList.add('active');verifyContainer.innerHTML='';draftTokens.forEach(word=>{const span=document.createElement('span');span.className='spec-token draft';span.textContent=word;verifyContainer.appendChild(span);});setTimeout(()=>{document.getElementById('specStep2').classList.remove('active');document.getElementById('specStep3').classList.add('active');const acceptRate=0.6+Math.random()*0.3;acceptContainer.innerHTML='';for(let i=0;i<draftTokens.length;i++){const word=draftTokens[i];const isAccepted=Math.random()<acceptRate||i===0;const span=document.createElement('span');if(isAccepted){span.className='spec-token verified';totalAccepted++;}else{span.className='spec-token rejected';span.textContent=word;totalRejected++;const corrected=sampleWords[(specStep+i+1)%sampleWords.length];const correctSpan=document.createElement('span');correctSpan.className='spec-token verified';correctSpan.textContent=corrected;acceptContainer.appendChild(correctSpan);totalAccepted++;break;}span.textContent=word;acceptContainer.appendChild(span);}specStep+=draftTokens.length;updateSpecStats();},400);},400);}
-function updateSpecStats(){const total=totalAccepted+totalRejected;const speedup=total>0?(totalAccepted/(totalAccepted-totalRejected||1)).toFixed(1):'1.0';const ss=document.getElementById('specSpeedup');if(ss)ss.textContent=speedup+'x';const sa=document.getElementById('specAccepted');if(sa)sa.textContent=totalAccepted;const sr=document.getElementById('specRejected');if(sr)sr.textContent=totalRejected;}
-function resetSpeculative(){initSpeculative();}
+      <div id="tab-quantization" class="tab-content hidden">
+        <h2 class="section-title">
+          Quantization
+          <span class="section-badge badge-concept">Concept</span>
+        </h2>
+        <p class="section-desc">
+          Quantization reduces the <strong>precision</strong> of weight values. A 32-bit float becomes a 16-bit, 8-bit, 
+          or even 4-bit number. Fewer bits = smaller file, faster inference, less memory — but potentially lower accuracy.
+        </p>
 
-// ===================== AGENT DEMO =====================
-const agentScenarios=[{perceive:'User asks: "Find cheapest flight NYC to London next week"',reason:'I need to search flights, compare prices, check dates.',act:'🔍 search_flights(origin="NYC", dest="London", date="next_week")',observe:'Found 3 flights: BA $520, Virgin $480, Delta $510. Virgin cheapest.',tool:'search_flights'},{perceive:'User asks: "Calculate compound interest on $10,000 at 7% for 5 years"',reason:'Use calculator tool for precise math.',act:'🧮 calculate(expression="10000 * (1 + 0.07)^5")',observe:'Result: $14,025.52. Interest earned: $4,025.52.',tool:'calculator'},{perceive:'User asks: "Schedule team meeting for Tuesday 2pm"',reason:'Check calendar availability, send invites.',act:'📅 check_availability(day="Tuesday", time="14:00") → create_event()',observe:'All 5 members available. Meeting scheduled. Invites sent.',tool:'calendar'}];
-let agentScenarioIdx=0,agentStepIdx=0;
-function runAgent(){const scenario=agentScenarios[agentScenarioIdx];const steps=['perceive','reason','act','observe'];const stepEls=['agentStep1','agentStep2','agentStep3','agentStep4'];const log=document.getElementById('agentLog');if(!log)return;stepEls.forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('active');});const currentEl=document.getElementById(stepEls[agentStepIdx]);if(currentEl)currentEl.classList.add('active');const step=steps[agentStepIdx];const content=scenario[step];const icons={perceive:'👁️',reason:'🧠',act:'🔧',observe:'👁️'};log.innerHTML+='<span class="info">'+icons[step]+' ['+step.toUpperCase()+']</span> '+content+'<br>';if(step==='act'){document.querySelectorAll('.agent-tool').forEach(t=>t.classList.remove('active'));const toolMap={search_flights:0,calculator:1,calendar:2,code:3,email:4,database:5};const toolIdx=toolMap[scenario.tool];const tools=document.querySelectorAll('.agent-tool');if(tools[toolIdx])tools[toolIdx].classList.add('active');}agentStepIdx++;if(agentStepIdx>=4){agentStepIdx=0;agentScenarioIdx=(agentScenarioIdx+1)%agentScenarios.length;setTimeout(()=>{log.innerHTML+='<span class="ok">✅ Task complete. Starting next scenario...</span><br><br>';},600);}}
-function resetAgent(){agentStepIdx=0;agentScenarioIdx=0;const log=document.getElementById('agentLog');if(log)log.innerHTML='> Agent initialized. Waiting for task...';['agentStep1','agentStep2','agentStep3','agentStep4'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('active');});document.querySelectorAll('.agent-tool').forEach(t=>t.classList.remove('active'));}
+        <div class="card">
+          <div class="card-title">📊 The Precision Trade-off</div>
+          <div class="card-body">
+            <strong>FP32</strong> (32-bit): Full precision, huge files.<br>
+            <strong>FP16/BF16</strong> (16-bit): Half precision, nearly identical quality, 2x smaller.<br>
+            <strong>INT8</strong> (8-bit): 4x smaller, slight quality drop.<br>
+            <strong>INT4</strong> (4-bit): 8x smaller, noticeable but often acceptable quality loss.<br>
+            <strong>1-bit</strong> (BitNet): Extreme compression, emerging research.
+          </div>
+        </div>
 
-// ===================== APP SIMULATOR =====================
-function updateAppSimulator(){const setSlider=(id,val)=>{const f=document.getElementById(id+'Fill');const t=document.getElementById(id+'Thumb');if(f)f.style.width=(val*100)+'%';if(t)t.style.left=(val*100)+'%';};setSlider('access',appState.access);setSlider('distill',appState.distill);setSlider('moe',appState.moe);setSlider('quant',appState.quant);setSlider('specApp',appState.spec);setSlider('agentApp',appState.agent);const al=document.getElementById('accessLabel');if(al)al.textContent=appState.access>0.5?'Open Weights':'Closed/API Only';const dl=document.getElementById('distillLabel');const dLabels=['Raw Frontier (400B+)','Partial (70B)','Fully Distilled (7B)','Tiny (1.5B)'];if(dl)dl.textContent=dLabels[Math.min(3,Math.floor(appState.distill*3.9))];const ml=document.getElementById('moeLabel');const mLabels=['Dense Model','Light MoE (4 experts)','Standard MoE (8 experts)','Heavy MoE (64 experts)'];if(ml)ml.textContent=mLabels[Math.min(3,Math.floor(appState.moe*3.9))];const ql=document.getElementById('quantLabel');const qLabels=['FP32 (32-bit)','INT4 (4-bit)','INT8 (8-bit)','FP16 (16-bit)','FP32 (32-bit)'];if(ql)ql.textContent=qLabels[Math.min(4,Math.floor(appState.quant*4.9))];const sl=document.getElementById('specLabel');if(sl)sl.textContent=appState.spec>0.5?'Enabled (2-4x speedup)':'Disabled';const agl=document.getElementById('agentLabel');if(agl)agl.textContent=appState.agent>0.5?'Full Agent Loop':'No Agent';const score=(appState.access*0.2)+(appState.distill*0.2)+(appState.moe*0.1)+((1-appState.quant)*0.2)+(appState.spec*0.1)+(appState.agent*0.2);const resultEl=document.getElementById('appResult');const descEl=document.getElementById('appResultDesc');const sizeEl=document.getElementById('resultSize');const speedEl=document.getElementById('resultSpeed');const costEl=document.getElementById('resultCost');const agentEl=document.getElementById('resultAgent');if(!resultEl)return;if(appState.access<0.3){resultEl.textContent='🔒 API-Only SaaS App';resultEl.style.color='var(--accent-rose)';descEl.textContent='Thin wrapper around someone else's API. High latency, ongoing costs, no customization.';if(sizeEl)sizeEl.textContent='~0MB local';if(speedEl)speedEl.textContent='~2s latency';if(costEl)costEl.textContent='$0.01-0.10 / 1K tok';if(agentEl)agentEl.textContent=appState.agent>0.5?'Agent: cloud-only':'No autonomy';}else if(score<0.35){resultEl.textContent='☁️ Self-Hosted Cloud App';resultEl.style.color='var(--accent-amber)';descEl.textContent='You control the model but need expensive GPU servers. Great for privacy, scales with cost.';if(sizeEl)sizeEl.textContent='~140GB VRAM';if(speedEl)speedEl.textContent='~30 tok/s';if(costEl)costEl.textContent='~$3/hr compute';if(agentEl)agentEl.textContent=appState.agent>0.5?'Agent: self-hosted':'No autonomy';}else if(score<0.6){resultEl.textContent='💻 Desktop AI Tool';resultEl.style.color='var(--accent-cyan)';descEl.textContent='Runs on consumer GPUs or Apple Silicon. One-time download, no recurring API costs.';if(sizeEl)sizeEl.textContent='~35GB download';if(speedEl)speedEl.textContent=appState.spec>0.5?'~60 tok/s (SpecDec)':'~25 tok/s';if(costEl)costEl.textContent='$0 inference';if(agentEl)agentEl.textContent=appState.agent>0.5?'Agent: local':'No autonomy';}else{resultEl.textContent='✅ On-Device / Edge App';resultEl.style.color='var(--accent-emerald)';descEl.textContent='Runs entirely on phone or IoT. Zero network dependency, complete privacy, instant response.';if(sizeEl)sizeEl.textContent='~4GB model';if(speedEl)speedEl.textContent=appState.spec>0.5?'~45 tok/s (SpecDec)':'~15 tok/s';if(costEl)costEl.textContent='$0 inference';if(agentEl)agentEl.textContent=appState.agent>0.5?'Agent: on-device':'No autonomy';}const apps=document.querySelectorAll('.app-item');apps.forEach((app,idx)=>{if(score>0.6){app.style.opacity='1';app.style.borderColor='var(--accent-emerald)';}else if(score>0.3){app.style.opacity=idx<2?'1':'0.4';app.style.borderColor=idx<2?'var(--accent-cyan)':'var(--border-subtle)';}else{app.style.opacity=idx===0?'1':'0.3';app.style.borderColor=idx===0?'var(--accent-amber)':'var(--border-subtle)';}});}
+        <div class="demo-box">
+          <div class="card-title">🎮 Interactive Demo: Bit Precision Visualizer</div>
+          <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">
+            Each block represents one bit. See how the same weight value is stored at different precision levels.
+          </p>
 
-// ===================== INIT =====================
-initWeightDemo();
-switchTab('weights');
-</script>
+          <div class="slider-container">
+            <div class="slider-label">
+              <span>Select Precision</span>
+              <span id="precisionLabel">FP32 (32-bit)</span>
+            </div>
+            <div class="slider-track" id="precSlider" onclick="handleSliderClick(event, 'prec')">
+              <div class="slider-fill" id="precFill" style="width:100%"></div>
+              <div class="slider-thumb" id="precThumb" style="left:100%"></div>
+            </div>
+          </div>
+
+          <div class="bit-visualizer" id="bitVisualizer"></div>
+
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;">
+            <div style="text-align:center;padding:10px;background:var(--bg-deep);border-radius:8px;">
+              <div style="font-size:18px;font-weight:700;color:var(--accent-cyan);" id="sizeMetric">100%</div>
+              <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">Relative Size</div>
+            </div>
+            <div style="text-align:center;padding:10px;background:var(--bg-deep);border-radius:8px;">
+              <div style="font-size:18px;font-weight:700;color:var(--accent-emerald);" id="speedMetric">1.0x</div>
+              <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">Inference Speed</div>
+            </div>
+            <div style="text-align:center;padding:10px;background:var(--bg-deep);border-radius:8px;">
+              <div style="font-size:18px;font-weight:700;color:var(--accent-amber);" id="qualityMetric">100%</div>
+              <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">Quality Retained</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <div class="card-title">💡 Why Quantization Shapes the App Layer</div>
+          <div class="card-body">
+            A 70B model at FP32 needs <strong>280GB</strong> of VRAM — impossible for consumer hardware. At INT4, it fits in <strong>35GB</strong>, runnable on a single high-end GPU. At INT8, a 7B model fits on a <strong>phone</strong>. Quantization is the bridge that makes on-device AI feasible.
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-apps" class="tab-content hidden">
+        <h2 class="section-title">
+          The Application Layer
+          <span class="section-badge badge-concept">Concept</span>
+        </h2>
+        <p class="section-desc">
+          Everything upstream — open/closed weights, distillation, quantization — converges at the <strong>application layer</strong>. 
+          These decisions determine what apps can exist, where they run, who can build them, and what they cost.
+        </p>
+
+        <div class="card">
+          <div class="card-title">🌍 The Capability Cascade</div>
+          <div class="card-body">
+            <strong>Frontier Lab</strong> trains a massive model → <strong>Distillation</strong> creates efficient variants → 
+            <strong>Quantization</strong> shrinks them for devices → <strong>Developers</strong> build apps that were previously impossible.
+            Each step in the chain multiplies access while dividing resource requirements.
+          </div>
+        </div>
+
+        <div class="demo-box">
+          <div class="card-title">🎮 Interactive Demo: App Feasibility Simulator</div>
+          <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">
+            Adjust the sliders to see how weight openness, distillation, and quantization determine what kind of AI app is possible.
+          </p>
+
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div class="slider-container">
+              <div class="slider-label">
+                <span>🔓 Weight Access</span>
+                <span id="accessLabel">Open Weights</span>
+              </div>
+              <div class="slider-track" id="accessSlider" onclick="handleSliderClick(event, 'access')">
+                <div class="slider-fill" id="accessFill" style="width:100%;background:linear-gradient(90deg,var(--accent-cyan),var(--accent-purple))"></div>
+                <div class="slider-thumb" id="accessThumb" style="left:100%"></div>
+              </div>
+            </div>
+
+            <div class="slider-container">
+              <div class="slider-label">
+                <span>🔥 Distillation Level</span>
+                <span id="distillLabel">Fully Distilled (7B)</span>
+              </div>
+              <div class="slider-track" id="distillSlider" onclick="handleSliderClick(event, 'distill')">
+                <div class="slider-fill" id="distillFill" style="width:50%;background:linear-gradient(90deg,var(--accent-purple),var(--accent-orange))"></div>
+                <div class="slider-thumb" id="distillThumb" style="left:50%"></div>
+              </div>
+            </div>
+
+            <div class="slider-container">
+              <div class="slider-label">
+                <span>⚡ Quantization</span>
+                <span id="quantLabel">INT4 (4-bit)</span>
+              </div>
+              <div class="slider-track" id="quantSlider" onclick="handleSliderClick(event, 'quant')">
+                <div class="slider-fill" id="quantFill" style="width:25%;background:linear-gradient(90deg,var(--accent-orange),var(--accent-emerald))"></div>
+                <div class="slider-thumb" id="quantThumb" style="left:25%"></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:20px;padding:16px;background:var(--bg-deep);border-radius:10px;border:1px solid var(--border-subtle);">
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">Resulting Capability</div>
+            <div id="appResult" style="font-size:16px;font-weight:700;color:var(--accent-emerald);margin-bottom:4px;">
+              ✅ On-Device Personal Assistant
+            </div>
+            <div id="appResultDesc" style="font-size:12px;color:var(--text-secondary);line-height:1.5;">
+              Runs entirely offline on a modern smartphone. No API costs, no latency, full privacy.
+            </div>
+            <div style="margin-top:12px;display:flex;gap:12px;font-size:11px;font-family:var(--font-mono);color:var(--text-muted);">
+              <span id="resultSize">~4GB model</span>
+              <span>•</span>
+              <span id="resultSpeed">~15 tok/s</span>
+              <span>•</span>
+              <span id="resultCost">$0 inference</span>
+            </div>
+          </div>
+
+          <div class="app-grid" style="margin-top:16px;">
+            <div class="app-item" id="app1">
+              <div class="app-icon">💬</div>
+              <div class="app-name">Local Chat</div>
+              <div class="app-meta">Privacy-first</div>
+            </div>
+            <div class="app-item" id="app2">
+              <div class="app-icon">📝</div>
+              <div class="app-name">Doc Assistant</div>
+              <div class="app-meta">Offline RAG</div>
+            </div>
+            <div class="app-item" id="app3">
+              <div class="app-icon">🎨</div>
+              <div class="app-name">Image Caption</div>
+              <div class="app-meta">Vision + LLM</div>
+            </div>
+            <div class="app-item" id="app4">
+              <div class="app-icon">🔧</div>
+              <div class="app-name">Code Helper</div>
+              <div class="app-meta">On-device IDE</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <div class="card-title">📋 How the Pipeline Shapes What's Possible</div>
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th>Stage</th>
+                <th>What Changes</th>
+                <th>App Impact</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong style="color:var(--accent-cyan)">Open Weights</strong></td>
+                <td>Anyone can download & modify</td>
+                <td>Self-hosted apps, fine-tuned specialists, no vendor lock-in</td>
+              </tr>
+              <tr>
+                <td><strong style="color:var(--accent-purple)">Distillation</strong></td>
+                <td>Large → Small with preserved skill</td>
+                <td>Affordable inference, edge deployment, real-time apps</td>
+              </tr>
+              <tr>
+                <td><strong style="color:var(--accent-orange)">Quantization</strong></td>
+                <td>32-bit → 4-bit precision</td>
+                <td>Phone apps, IoT devices, 8x cost reduction</td>
+              </tr>
+              <tr>
+                <td><strong style="color:var(--accent-emerald)">App Layer</strong></td>
+                <td>All three combined</td>
+                <td>New categories: private AI, offline agents, $0-cost assistants</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mental-model">
+          <h3>🧠 The Single Mental Model</h3>
+          <p>
+            Think of AI capability as <strong>water flowing downhill</strong>. Frontier labs are the mountain spring — 
+            they produce the purest, most capable models. <strong>Open weights</strong> are the decision to let the water 
+            flow freely rather than keeping it in a locked reservoir. <strong>Distillation</strong> is building channels 
+            and aqueducts to direct that water where it's needed. <strong>Quantization</strong> is filtering and compressing 
+            the flow so it can reach the smallest villages (your phone, your watch, your thermostat).
+          </p>
+          <p style="margin-top:10px;">
+            The <strong>application layer</strong> is what grows in the valley below — entirely dependent on whether the water 
+            reaches it, how much arrives, and what it costs to access. Every constraint upstream becomes a design constraint 
+            for the apps downstream.
+          </p>
+          <div class="flow-summary">
+            <span class="step" style="color:var(--accent-cyan)">🧠 Frontier Lab</span>
+            <span class="arrow-sm">→</span>
+            <span class="step" style="color:var(--accent-cyan)">🔓 Open Weights</span>
+            <span class="arrow-sm">→</span>
+            <span class="step" style="color:var(--accent-purple)">🔥 Distillation</span>
+            <span class="arrow-sm">→</span>
+            <span class="step" style="color:var(--accent-orange)">⚡ Quantization</span>
+            <span class="arrow-sm">→</span>
+            <span class="step" style="color:var(--accent-emerald)">📱 Your Apps</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentTab = 'weights';
+    let weightsOpen = true;
+    let tempValue = 2.0;
+    let precisionLevel = 4;
+    let distillProgress = 0;
+
+    let appState = {
+      access: 1.0,
+      distill: 0.5,
+      quant: 0.25
+    };
+
+    function switchTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.tab-content').forEach(el => {
+        el.classList.add('hidden');
+        el.classList.remove('fade-in');
+      });
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.flow-node').forEach(node => node.classList.remove('active'));
+
+      const content = document.getElementById('tab-' + tab);
+      content.classList.remove('hidden');
+      content.classList.add('fade-in');
+
+      document.querySelector(`.tab-btn[data-tab="${tab}"]`).classList.add('active');
+      document.querySelector(`.flow-node[data-tab="${tab}"]`).classList.add('active');
+
+      if (tab === 'weights') initWeightDemo();
+      if (tab === 'quantization') initBitDemo();
+      if (tab === 'apps') updateAppSimulator();
+    }
+
+    function initWeightDemo() {
+      const grid = document.getElementById('weightGrid');
+      grid.innerHTML = '';
+      for (let i = 0; i < 400; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'weight-cell';
+        const hue = Math.random() * 60 + 180;
+        const lightness = 30 + Math.random() * 40;
+        cell.style.background = `hsl(${hue}, 70%, ${lightness}%)`;
+        cell.title = `Weight ${i}: ${(Math.random() * 2 - 1).toFixed(6)}`;
+        grid.appendChild(cell);
+      }
+    }
+
+    function regenerateWeights() {
+      initWeightDemo();
+    }
+
+    function toggleOpenClosed() {
+      weightsOpen = !weightsOpen;
+      const overlay = document.getElementById('weightOverlay');
+      const status = document.getElementById('weightStatus');
+      if (weightsOpen) {
+        overlay.style.display = 'none';
+        status.textContent = '🔓 Open — Full Access';
+        status.style.color = 'var(--accent-emerald)';
+      } else {
+        overlay.style.display = 'flex';
+        status.textContent = '🔒 Closed — API Only';
+        status.style.color = 'var(--accent-rose)';
+      }
+    }
+
+    function handleSliderClick(e, type) {
+      const track = e.currentTarget;
+      const rect = track.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const pct = Math.max(0, Math.min(1, x / rect.width));
+
+      if (type === 'temp') {
+        tempValue = 0.5 + pct * 4.5;
+        document.getElementById('tempValue').textContent = `T = ${tempValue.toFixed(1)}`;
+        document.getElementById('tempFill').style.width = (pct * 100) + '%';
+        document.getElementById('tempThumb').style.left = (pct * 100) + '%';
+        updateStudentOutput();
+      } else if (type === 'prec') {
+        precisionLevel = Math.round(pct * 4);
+        updatePrecisionDemo();
+      } else if (type === 'access') {
+        appState.access = pct;
+        updateAppSimulator();
+      } else if (type === 'distill') {
+        appState.distill = pct;
+        updateAppSimulator();
+      } else if (type === 'quant') {
+        appState.quant = pct;
+        updateAppSimulator();
+      }
+    }
+
+    function updateStudentOutput() {
+      const quality = Math.max(0.5, 1 - Math.abs(tempValue - 2.0) * 0.15);
+      const match = Math.round(quality * 100);
+      document.getElementById('studentQuality').textContent = `Quality: ${match}% match`;
+
+      const base = [0.65, 0.25, 0.08, 0.02];
+      const noise = (tempValue - 2.0) * 0.03;
+      const out = base.map(v => Math.max(0, v + (Math.random() - 0.5) * noise * 2));
+      const sum = out.reduce((a, b) => a + b, 0);
+      const normalized = out.map(v => (v / sum).toFixed(2));
+      document.getElementById('studentOutput').textContent = `Output: [${normalized.join(', ')}]`;
+    }
+
+    function runDistillation() {
+      const log = document.getElementById('distillLog');
+      const steps = [
+        '> Loading teacher model (70B params)...',
+        '> Loading student architecture (7B params)...',
+        '> Computing soft targets with T=' + tempValue.toFixed(1) + '...',
+        '> Backpropagating KL divergence loss...',
+        '> Step ' + (distillProgress * 100 + 10) + '/1000: Loss = ' + (2.5 - distillProgress * 2).toFixed(4),
+        '> Student accuracy improving...',
+        '> ✅ Distillation complete! Student achieves 94% teacher quality.'
+      ];
+
+      let i = 0;
+      log.innerHTML = '';
+      const interval = setInterval(() => {
+        if (i >= steps.length) {
+          clearInterval(interval);
+          distillProgress = Math.min(1, distillProgress + 0.1);
+          document.getElementById('studentBar').style.width = (14 + distillProgress * 10) + '%';
+          return;
+        }
+        log.innerHTML += steps[i] + '<br>';
+        i++;
+      }, 300);
+    }
+
+    function resetDistill() {
+      distillProgress = 0;
+      document.getElementById('studentBar').style.width = '14%';
+      document.getElementById('distillLog').innerHTML = '> Ready to distill knowledge...';
+      updateStudentOutput();
+    }
+
+    const precisionConfigs = [
+      { name: '1-bit (BitNet)', bits: 1, size: 3, speed: 8.0, quality: 65, color: '#ef4444' },
+      { name: 'INT4 (4-bit)', bits: 4, size: 12, speed: 4.5, quality: 88, color: '#f97316' },
+      { name: 'INT8 (8-bit)', bits: 8, size: 25, speed: 2.8, quality: 96, color: '#fbbf24' },
+      { name: 'FP16 (16-bit)', bits: 16, size: 50, speed: 1.5, quality: 99, color: '#22d3ee' },
+      { name: 'FP32 (32-bit)', bits: 32, size: 100, speed: 1.0, quality: 100, color: '#a78bfa' }
+    ];
+
+    function initBitDemo() {
+      updatePrecisionDemo();
+    }
+
+    function updatePrecisionDemo() {
+      const config = precisionConfigs[precisionLevel];
+      const pct = precisionLevel / 4;
+
+      document.getElementById('precisionLabel').textContent = config.name;
+      document.getElementById('precFill').style.width = (pct * 100) + '%';
+      document.getElementById('precThumb').style.left = (pct * 100) + '%';
+
+      document.getElementById('sizeMetric').textContent = config.size + '%';
+      document.getElementById('sizeMetric').style.color = config.color;
+      document.getElementById('speedMetric').textContent = config.speed + 'x';
+      document.getElementById('qualityMetric').textContent = config.quality + '%';
+
+      const container = document.getElementById('bitVisualizer');
+      container.innerHTML = '';
+
+      precisionConfigs.forEach((pc, idx) => {
+        const row = document.createElement('div');
+        row.className = 'bit-row';
+
+        const label = document.createElement('div');
+        label.className = 'bit-label';
+        label.textContent = pc.bits + '-bit';
+        label.style.color = idx === precisionLevel ? config.color : 'var(--text-muted)';
+
+        const blocks = document.createElement('div');
+        blocks.className = 'bit-blocks';
+
+        const numBlocks = Math.min(32, pc.bits);
+        for (let b = 0; b < numBlocks; b++) {
+          const block = document.createElement('div');
+          block.className = 'bit-block';
+          if (idx === precisionLevel) {
+            block.style.background = config.color;
+            block.style.boxShadow = `0 0 6px ${config.color}40`;
+          } else {
+            block.style.background = 'var(--border-subtle)';
+          }
+          blocks.appendChild(block);
+        }
+
+        const info = document.createElement('div');
+        info.className = 'bit-info';
+        info.textContent = pc.size + '% size';
+
+        row.appendChild(label);
+        row.appendChild(blocks);
+        row.appendChild(info);
+        container.appendChild(row);
+      });
+    }
+
+    function updateAppSimulator() {
+      document.getElementById('accessFill').style.width = (appState.access * 100) + '%';
+      document.getElementById('accessThumb').style.left = (appState.access * 100) + '%';
+      document.getElementById('accessLabel').textContent = appState.access > 0.5 ? 'Open Weights' : 'Closed/API Only';
+
+      document.getElementById('distillFill').style.width = (appState.distill * 100) + '%';
+      document.getElementById('distillThumb').style.left = (appState.distill * 100) + '%';
+      const distillLabels = ['Raw Frontier (400B+)', 'Partial (70B)', 'Fully Distilled (7B)', 'Tiny (1.5B)'];
+      const dIdx = Math.min(3, Math.floor(appState.distill * 3.9));
+      document.getElementById('distillLabel').textContent = distillLabels[dIdx];
+
+      document.getElementById('quantFill').style.width = (appState.quant * 100) + '%';
+      document.getElementById('quantThumb').style.left = (appState.quant * 100) + '%';
+      const quantLabels = ['FP32 (32-bit)', 'INT4 (4-bit)', 'INT8 (8-bit)', 'FP16 (16-bit)', 'FP32 (32-bit)'];
+      const qIdx = Math.min(4, Math.floor(appState.quant * 4.9));
+      document.getElementById('quantLabel').textContent = quantLabels[qIdx];
+
+      const score = (appState.access * 0.3) + (appState.distill * 0.35) + ((1 - appState.quant) * 0.35);
+
+      const resultEl = document.getElementById('appResult');
+      const descEl = document.getElementById('appResultDesc');
+      const sizeEl = document.getElementById('resultSize');
+      const speedEl = document.getElementById('resultSpeed');
+      const costEl = document.getElementById('resultCost');
+
+      if (appState.access < 0.3) {
+        resultEl.textContent = '🔒 API-Only SaaS App';
+        resultEl.style.color = 'var(--accent-rose)';
+        descEl.textContent = 'You can only build a thin wrapper around someone else\'s API. High latency, ongoing costs, no customization. Every user request hits the provider\'s servers.';
+        sizeEl.textContent = '~0MB local';
+        speedEl.textContent = '~2s latency';
+        costEl.textContent = '$0.01-0.10 / 1K tokens';
+      } else if (score < 0.4) {
+        resultEl.textContent = '☁️ Self-Hosted Cloud App';
+        resultEl.style.color = 'var(--accent-amber)';
+        descEl.textContent = 'You control the model but need expensive GPU servers. Great for privacy and customization, but costs scale with users. Requires ML ops expertise.';
+        sizeEl.textContent = '~140GB VRAM';
+        speedEl.textContent = '~30 tok/s';
+        costEl.textContent = '~$3/hr compute';
+      } else if (score < 0.7) {
+        resultEl.textContent = '💻 Desktop AI Tool';
+        resultEl.style.color = 'var(--accent-cyan)';
+        descEl.textContent = 'Runs on consumer GPUs or Apple Silicon. One-time model download, no recurring API costs. Good for power users and professionals.';
+        sizeEl.textContent = '~35GB download';
+        speedEl.textContent = '~25 tok/s';
+        costEl.textContent = '$0 inference';
+      } else {
+        resultEl.textContent = '✅ On-Device / Edge App';
+        resultEl.style.color = 'var(--accent-emerald)';
+        descEl.textContent = 'Runs entirely on phone, tablet, or IoT device. Zero network dependency, complete privacy, instant response. Opens entirely new product categories.';
+        sizeEl.textContent = '~4GB model';
+        speedEl.textContent = '~15 tok/s';
+        costEl.textContent = '$0 inference';
+      }
+
+      const apps = document.querySelectorAll('.app-item');
+      apps.forEach((app, idx) => {
+        if (score > 0.6) {
+          app.style.opacity = '1';
+          app.style.borderColor = 'var(--accent-emerald)';
+        } else if (score > 0.3) {
+          app.style.opacity = idx < 2 ? '1' : '0.4';
+          app.style.borderColor = idx < 2 ? 'var(--accent-cyan)' : 'var(--border-subtle)';
+        } else {
+          app.style.opacity = idx === 0 ? '1' : '0.3';
+          app.style.borderColor = idx === 0 ? 'var(--accent-amber)' : 'var(--border-subtle)';
+        }
+      });
+    }
+
+    initWeightDemo();
+    switchTab('weights');
+  </script>
 </body>
 </html>
